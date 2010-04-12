@@ -6,6 +6,8 @@
 typedef uint64_t CGIUInteger;
 typedef int64_t CGIInteger;
 
+#define CGINotFound (CGIUInteger *)0xffffffffffffffff;
+
 typedef char unichar;
 
 typedef struct _CGIRange {
