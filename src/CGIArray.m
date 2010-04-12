@@ -147,6 +147,15 @@ struct _CGIArrayBox {
   return self;
 }
 
+- (CGIUInteger)indexOfObjectIdenticalTo:(id)anObject {
+  CGIUInteger i;
+  for (i = 0; i < _count; i++) {
+    if (_items[i] == anObject)
+      return i;
+  }
+  return CGINotFound;
+}
+
 - (void)dealloc {
   int i;
   for (i = 0; i < _count; i++) {
@@ -305,6 +314,18 @@ static CGIPlaceholderMutableArray *sharedMutablePlaceHolder;
     aBox = aBox->next;
   }
   return aBox->object;
+}
+
+- (CGIUInteger)indexOfObjectIdenticalTo:(id)anObject {
+  CGIUInteger i = 0;
+  CGIArrayBox *aBox = _first;
+  while (aBox) {
+    if (aBox->object == anObject)
+      return i;
+    ++i;
+    aBox = aBox->next;
+  }
+  return CGINotFound;
 }
 
 - (id)initWithObject:(id)anObject {

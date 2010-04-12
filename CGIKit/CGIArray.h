@@ -24,6 +24,8 @@
 - (id)initWithObjects:(id)firstObject, ...; ///< @brief Initializes an array with several items.
 - (id)initWithObjects:(id*)items count:(CGIUInteger)count; ///< @brief Initializes an array with several items.
 
+- (CGIUInteger)indexOfObjectIdenticalTo:(id)anObject;
+
 @end
 
 @interface CGIMutableArray : CGIArray
