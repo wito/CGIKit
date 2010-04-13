@@ -10,6 +10,10 @@
 
 @implementation CGIData
 
+- (id)init {
+  return [self initWithBytes:NULL length:0];
+}
+
 - (id)initWithData:(CGIData *)data {
   return [self initWithBytes:[data bytes] length:[data length]];
 }
@@ -17,9 +21,10 @@
 - (id)initWithBytes:(unsigned char *)data length:(CGIUInteger)length {
   self = [super init];
   if (self != nil) {
-    _bytes = malloc(length);
+    if (length) _bytes = malloc(length);
+    else _bytes = NULL;
     _length = length;
-    memcpy(_bytes, data, _length);
+    if (length) memcpy(_bytes, data, _length);
   }
   return self;
 }
@@ -47,7 +52,7 @@
 }
 
 - (void)dealloc {
-  free(_bytes);
+  if (_bytes) free(_bytes);
   [super dealloc];
 }
 
@@ -116,6 +121,14 @@ static const char dataParts[] = "0123456789abcdef";
 @end
 
 @implementation CGIMutableData
+
+- (id)initWithBytes:(unsigned char *)data length:(CGIUInteger)length {
+  self = [super initWithBytes:data length:length];
+  if (self != nil) {
+    _capacity = length;
+  }
+  return self;
+}
 
 - (void)appendData:(CGIData *)data {
   [self appendBytes:[data bytes] length:[data length]];
