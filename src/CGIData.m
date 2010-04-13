@@ -83,10 +83,34 @@ static const char dataParts[] = "0123456789abcdef";
   return hash;
 }
 
-static const char base64Table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
 - (CGIString *)XMLRepresentation {
+  static const char base64Table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  if (_length == 0) return @"";
+  
+  unichar *characters = calloc(((_length + 2) / 3 * 4) + 1, 1);
+  [CGIAutoreleasePool addMemoryBlockToPool:characters];
 
+  CGIUInteger i = 0;
+  while (i < [data length]) {
+    unichar buffer[3] = {0,0,0};
+    CGIUInteger bufferLength = 0;
+    while (bufferLength < 3 && i < _length)
+      buffer[bufferLength++] = ((char *)[data bytes])[i++];
+
+    //  Encode the bytes in the buffer to four characters, including padding "=" characters if necessary.
+    characters[length++] = encodingTable[(buffer[0] & 0xFC) >> 2];
+    characters[length++] = encodingTable[((buffer[0] & 0x03) << 4) | ((buffer[1] & 0xF0) >> 4)];
+
+    if (bufferLength > 1)
+      characters[length++] = encodingTable[((buffer[1] & 0x0F) << 2) | ((buffer[2] & 0xC0) >> 6)];
+    else characters[length++] = '=';
+
+    if (bufferLength > 2)
+      characters[length++] = encodingTable[buffer[2] & 0x3F];
+    else characters[length++] = '=';        
+  }
+  
+  return [CGIString stringWithFormat:@"<data>%s</data>", characters];
 }
 
 @end
