@@ -2,6 +2,7 @@
 
 #import "CGIKit/CGIData.h"
 #import "CGIKit/CGIString.h"
+#import "CGIKit/CGIAutoreleasePool.h"
 
 #import <stdlib.h>
 #import <string.h>
@@ -89,18 +90,18 @@ static const char dataParts[] = "0123456789abcdef";
 }
 
 - (CGIString *)XMLRepresentation {
-  static const char base64Table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   if (_length == 0) return @"";
   
   unichar *characters = calloc(((_length + 2) / 3 * 4) + 1, 1);
   [CGIAutoreleasePool addMemoryBlockToPool:characters];
-
+  CGIUInteger length = 0;
   CGIUInteger i = 0;
-  while (i < [data length]) {
+  while (i < _length) {
     unichar buffer[3] = {0,0,0};
     CGIUInteger bufferLength = 0;
     while (bufferLength < 3 && i < _length)
-      buffer[bufferLength++] = ((char *)[data bytes])[i++];
+      buffer[bufferLength++] = _bytes[i++];
 
     //  Encode the bytes in the buffer to four characters, including padding "=" characters if necessary.
     characters[length++] = encodingTable[(buffer[0] & 0xFC) >> 2];
