@@ -1,0 +1,8 @@
+==CGIKit
+
+Version: 0.0.1 / Pre-Alpha
+
+Requirements:
+  * libobjc2
+  * libfcgi (http://fastcgi.com)
+  * libxml2 (http://xmlsoft.org)
