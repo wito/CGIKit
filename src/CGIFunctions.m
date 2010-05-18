@@ -37,13 +37,6 @@ BOOL CGILocationInRange(CGIInteger location,CGIRange range){
    return (location >= range.location && location < CGIMaxRange(range))?YES:NO;
 }
 
-
-int CGIKitArgInfoFunction (const struct printf_info *info, size_t n, int *argtypes) {
-  if (n > 0)
-    argtypes[0] = PA_POINTER;
-  return 1;
-}
-
 int CGIKitPrintFunction (FILE *stream, const struct printf_info *info, const void *const *args) {
   id self;
   CGIString *buffer;
@@ -54,9 +47,28 @@ int CGIKitPrintFunction (FILE *stream, const struct printf_info *info, const voi
   return len;
 }
 
-__attribute__((constructor)) CGIKitLoadLibrary() {
-  register_printf_function('@', CGIKitPrintFunction, CGIKitArgInfoFunction);
+#if __GLIBC_PREREQ(2,11)
+int CGIKitArgInfoFunction (const struct printf_info *info, size_t n, int *argtypes, int *size) {
+  if (n > 0)
+    argtypes[0] = PA_POINTER;
+  return 1;
 }
+#else
+int CGIKitArgInfoFunction (const struct printf_info *info, size_t n, int *argtypes) {
+  if (n > 0)
+    argtypes[0] = PA_POINTER;
+  return 1;
+}
+#endif
+
+__attribute__((constructor)) CGIKitLoadLibrary() {
+#if __GLIBC_PREREQ(2,11)
+  register_printf_specifier('@',CGIKitPrintFunction, CGIKitArgInfoFunction);
+#else
+  register_printf_function('@', CGIKitPrintFunction, CGIKitArgInfoFunction);
+#endif
+}
+
 
 BOOL CGIWritePropertyList (id<CGIPropertyListObject> root, CGIString *filename) {
   CGIString *plistData = [CGIString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n%@\n</plist>\n", [root XMLRepresentation]];
