@@ -49,17 +49,13 @@ int CGIKitPrintFunction (FILE *stream, const struct printf_info *info, const voi
 
 #if __GLIBC_PREREQ(2,11)
 int CGIKitArgInfoFunction (const struct printf_info *info, size_t n, int *argtypes, int *size) {
-  if (n > 0)
-    argtypes[0] = PA_POINTER;
-  return 1;
-}
 #else
 int CGIKitArgInfoFunction (const struct printf_info *info, size_t n, int *argtypes) {
+#endif
   if (n > 0)
     argtypes[0] = PA_POINTER;
   return 1;
 }
-#endif
 
 __attribute__((constructor)) CGIKitLoadLibrary() {
 #if __GLIBC_PREREQ(2,11)
