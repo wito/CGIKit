@@ -4,17 +4,18 @@ CFLAGS=-fobjc-exceptions -fconstant-string-class=CGIConstantString -fPIC -g -I. 
 SOFLAGS=-shared -Wl,-soname,libcgikit.so.0
 LFLAGS=-lobjc -lfcgi -lxml2
 #LFLAGS=-lfcgi -lsqlite3 -lxml2
+TLFLAGS=-lcgikit
 
 TDIR=
-TODIR=
+TODIR=test
 ODIR=obj
 
 VERSION = 0.0.1
 
 .PHONY: clean doc install
 
-_TEST = 
-TEST = $(patsubst %,$(TODIR)/%.test,$(_TEST))
+_TEST = harness.o String.o Array.o
+TEST = $(patsubst %,$(TODIR)/%,$(_TEST))
 
 _OBJ = CGIFunctions.o CGIAutoreleasePool.o CGIObject.o \
        CGIString.o CGIDictionary.o CGIArray.o \
@@ -31,6 +32,13 @@ $(ODIR)/%.o: src/%.m $(DEPS)
 	mkdir -p obj/
 	$(CC) -c -o $@ $< $(CFLAGS)
 
+test: $(TEST)
+	mkdir -p bin/
+	$(CC) -o bin/test ${TEST} $(TLFLAGS)
+
+$(TODIR)/%.o: test/%.m $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
 install: lib/libcgikit.so.${VERSION}
 	install lib/libcgikit.so.${VERSION} /usr/lib
 	ln -fs /usr/lib/libcgikit.so.${VERSION} /usr/lib/libcgikit.so.0
@@ -42,3 +50,4 @@ install: lib/libcgikit.so.${VERSION}
 
 clean:
 	rm -rf $(ODIR) lib
+	rm $(TODIR)/*.o

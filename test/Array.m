@@ -1,11 +1,10 @@
 #import "CGIKit/CGIKit.h"
 #include <stdio.h>
 
-int main () {
+int CGIKitTest_Array () {
 
   CGIAutoreleasePool *pool = [[CGIAutoreleasePool alloc] init];
-
-
+  
   CGIArray *anArray = [[CGIArray alloc] initWithObjects:@"Peter", @"Frank", @"Tom", nil];
   printf("%s\n", [[anArray description] UTF8String]);
   CGIArray *anotherArray = [[CGIArray alloc] initWithObjects:@"Pan", [anArray autorelease], nil];

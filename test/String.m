@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int main () {
+int CGIKitTest_String () {
 
   CGIAutoreleasePool *pool = [[CGIAutoreleasePool alloc] init];
   CGIUTF8String *aString = [CGIUTF8String stringWithString:@"Copyright \xC2\xA9"];
