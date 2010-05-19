@@ -50,4 +50,4 @@ install: lib/libcgikit.so.${VERSION}
 
 clean:
 	rm -rf $(ODIR) lib
-	rm $(TODIR)/*.o
+	rm -f $(TODIR)/*.o
