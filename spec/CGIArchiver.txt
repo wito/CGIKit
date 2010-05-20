@@ -1,0 +1,73 @@
+CGIArchiver – Functionality and methodology
+
+Grammar
+
+NULL:
+  <0x00>
+
+REFERENCE:
+  UINT_32
+
+CLASSNAME:
+  UINT_8* NULL
+  
+TYPESTRING:
+  ("q" | "Q" | "*" | "@" | "D")* NULL
+
+OBJECT:
+  REFERENCE CLASSNAME TYPESTRING (FIELD_DATA | (REFERENCE))* NULL
+
+HEADER:
+  "CKAr" <0x00000001>
+
+SIZE:
+  UINT_32
+
+ARCHIVE:
+  HEADER SIZE OBJECT*
+
+The archive MUST open with the byte string "CKAr", followed by a big-endian 32 bit unsigned integer representing archive version, <0x00000001>.
+
+Following this header are two reserved big-endian 32 bit unsigned integer, the first possibly describing the maximum number of entries in the reference table and one. In version 1 this number SHOULD be <0xFFFFFF00>, and SHOULD be ignored.
+
+The archive MUST contain a reference table containing all objects in the archive. The REFERENCE number MUST be an increasing series of BE 32-bit unsigned integers. (Note: Due to other features, the numbers need not be strictly sequential, but MUST be strictly increasing).
+
+Each entry in the reference table MUST consist of the reference number, the classname, NULL-terminated, a type string and 0 or more encoded fields.
+
+Currently, only four primitive data types MUST be supported: CGIUInteger (an unsigned 64-bit BE integer, 'Q'), CGIInteger (a signed 64-bit BE integer, 'q'), data (a 32-bit BE integer `l`, followed by `l` bytes of data, 'D'), string (a NULL-terminated sequence of bytes, '*') and reference (a 32-bit BE integer pointing to an entry in the reference table, '@').
+
+Additionally, there is a reserved reference number, 0. Objects in an archive MUST NOT refer to <0x00000000>, and it MUST NOT be used in the reference table.
+
+The reference numbers <0xFFFFFF00> and up are reserved, and will be designated <Fx00> in this documentation. They SHOULD NOT be used, except as outlined below.
+
+Example archive (newlines included for readability only):
+
+CKAr<0x00000001>
+<Fx00>
+<0x00000001>CGISomeClass<0x00>@@@<0x00><0x00000002><0x00000003><0x0000004><FxFE>
+<0x00000002>CGIString<0x00>*<0x00>String data<0x00><FxFE>
+<0x00000003>CGIData<0x00>-<0x00><0x00000005>Data<0x00><FxFE>
+<0x00000004>CGIIntegerNumber<0x00>L<0x00><0x0000000000001000><FxFE>
+
+<Fx> opcodes
+
+<Fx00>:
+  Not found, N/A, truncated. When a decoder reaches <Fx00> it MUST assume that the archive is finished, and when rewriting an archive, anything following the <0x00> immediately prior to <Fx00> used as a reference number SHOULD be discarded.
+
+<FxF0>:
+  nil. This opcode MUST be inserted when `-encodeObject:` is called with an argument of `nil`.
+  
+<FxFE>:
+  record separator. When all has been read or written, the next thing before a new record MUST be <FxFE>.
+
+<FxFF>:
+  Deleted. A record marked with the reference number <FxFF> MUST be considered deleted, and skipped. Any REFERENCE field pointing to <FxFF> MUST be interpreted as `nil`.
+  
+Example archive revisited after a deletion:
+
+CKAr<0x00000001>
+<Fx00>
+<0x00000001>CGISomeClass<0x00>@@@<0x00><FxFF><0x00000003><0x0000004><FxFE>
+<FxFF>CGIString<0x00>S<0x00>String data<0x00><FxFE>
+<0x00000003>CGIData<0x00>D<0x00><0x00000005>Data<0x00><FxFE>
+<0x00000004>CGIIntegerNumber<0x00>L<0x00><0x0000000000001000><FxFE>
