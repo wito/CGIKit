@@ -184,6 +184,10 @@ static CGIPlaceholderArray *sharedPlaceHolder;
   return [[CGIConcreteArray alloc] init];
 }
 
+- (id)initWithObject:(id)anObject {
+  return [[CGIConcreteArray alloc] initWithObject:anObject];
+}
+
 - (id)initWithObjects:(id*)items count:(CGIUInteger)count {
   return [[CGIConcreteArray alloc] initWithObjects:items count:count];
 }
@@ -269,6 +273,36 @@ static CGIPlaceholderMutableArray *sharedMutablePlaceHolder;
   return [[CGIConcreteMutableArray alloc] initWithObject:anObject];
 }
 
+- (id)initWithObjects:(id)firstObject, ... {
+  id* _items;
+  CGIUInteger _count;
+  va_list ap;
+  va_start(ap, firstObject);
+  CGIUInteger count = (firstObject)?1:0;
+  id current;
+  if (firstObject) {
+    while (current = va_arg(ap, id)) count++;
+  }
+  va_end(ap);
+  _count = count;
+
+  if (count > 0) {
+    va_start(ap, firstObject);
+    _items = objc_malloc(sizeof(id)*count);
+    id *this = _items;
+    *this++ = firstObject;
+    while (current = va_arg(ap, id)) {
+      *this++ = current;
+    }
+    va_end(ap);
+  } else if (count == 0) {
+    _items = NULL;
+  }
+  id retval = [[CGIConcreteMutableArray alloc] initWithObjects:_items count:_count];
+  objc_free(_items);
+  return retval;
+}
+
 - (id)initWithObjects:(id*)items count:(CGIUInteger)count {
   return [[CGIConcreteMutableArray alloc] initWithObjects:items count:count];
 }
@@ -295,6 +329,17 @@ static CGIPlaceholderMutableArray *sharedMutablePlaceHolder;
   if (self != nil) {
     _first = _last = NULL;
     _count = 0;
+  }
+  return self;
+}
+
+- (id)initWithObjects:(id*)items count:(CGIUInteger)count {
+  self = [super init];
+  if (self != nil) {
+    CGIUInteger i;
+    for (i = 0; i < _count; i++) {
+      [self addObject:items[i]];
+    }
   }
   return self;
 }
