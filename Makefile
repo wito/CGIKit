@@ -49,5 +49,5 @@ install: lib/libcgikit.so.${VERSION}
 .PHONY: clean
 
 clean:
-	rm -rf $(ODIR) lib
+	rm -rf $(ODIR) lib bin
 	rm -f $(TODIR)/*.o
