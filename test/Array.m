@@ -14,7 +14,7 @@ int CGIKitTest_Array () {
   [anotherArray release];
   
   [CGIArray arrayWithObject:@"Boom!"];
-  printf("%d\n", [[[[CGIArray alloc] initWithObject:@"Bang!"] autorelease] indexOfObjectIdenticalTo:@"Bang!"]);
+  printf("%ld\n", [[[[CGIArray alloc] initWithObject:@"Bang!"] autorelease] indexOfObjectIdenticalTo:@"Bang!"]);
   
   id fakeArray[] = { @"Voom!", @"Wham!" };
   [[[CGIArray alloc] initWithObjects:fakeArray count:2] autorelease];
