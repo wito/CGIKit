@@ -137,11 +137,11 @@ static const char dataParts[] = "0123456789abcdef";
 
 - (void)appendBytes:(const unsigned char *)data length:(CGIUInteger)length {
   CGIUInteger newLength = _length + length;
-  if (newLength < _capacity) {
-    while (newLength < _capacity) {
+  if (newLength > _capacity) {
+    while (newLength > _capacity) {
       _capacity += CGI_DATA_BLOCK_SIZE;
     }
-    
+
     _bytes = realloc(_bytes, _capacity);
   }
   memcpy(&_bytes[_length], data, length);
