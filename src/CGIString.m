@@ -14,6 +14,8 @@
 #import <objc/objc-api.h>
 #import "CGIKit/CGIArray.h"
 
+#import "CGIKit/CGICoder.h"
+
 @interface CGIPlaceholderString : CGIString
 @end
 
@@ -21,6 +23,10 @@
 @end
 
 @implementation CGIString
+
+- (CGIString *)classNameForArchiver {
+  return @"CGIString";
+}
 
 + (id)string {
   return @"";
@@ -72,6 +78,12 @@
 
 - (id)initWithContentsOfFile:(CGIString *)path {
   return [[CGISimpleCString alloc] initWithContentsOfFile:path];
+}
+
+- (id)initWithCoder:(CGICoder *)coder {
+  unichar *stringData = [coder decodeString];
+
+  return [[CGISimpleCString alloc] initWithUTF8StringNoCopy:stringData length:strlen(stringData) freeWhenDone:YES];
 }
 
 - (CGIUInteger)lengthOfBytes {
@@ -309,6 +321,10 @@
   return YES;
 }
 
+- (void)encodeWithCoder:(CGICoder *)coder {
+  [coder encodeString:[self UTF8String]];
+}
+
 @end
 
 @implementation CGISimpleCString
@@ -396,6 +412,10 @@
 @end
 
 @implementation CGIMutableString
+
+- (CGIString *)classNameForArchiver {
+  return @"CGIMutableString";
+}
 
 + (id)alloc
 {
