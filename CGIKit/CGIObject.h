@@ -47,3 +47,10 @@
 - (BOOL)isProxy; ///< @return YES if the object is a proxy.
 
 @end
+
+@interface CGIObject (CGICodingAdditions)
+
+- (CGIString *)classNameForArchiver;
+
+@end
+
