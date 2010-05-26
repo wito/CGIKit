@@ -6,7 +6,7 @@
 typedef uint64_t CGIUInteger;
 typedef int64_t CGIInteger;
 
-#define CGINotFound (CGIUInteger)0xffffffffffffffff;
+#define CGINotFound (CGIUInteger)0xffffffffffffffff
 
 typedef char unichar;
 
