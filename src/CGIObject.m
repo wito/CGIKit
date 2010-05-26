@@ -222,5 +222,9 @@ CGIUInteger CGIKit_INTERNAL_CGIRetainCount(id self) {
   return msg(self,selector,arg1,arg2);
 }
 
+- (CGIString *)classNameForArchiver {
+  return [CGIString stringWithFormat:@"%s", [self class]->name];
+}
+
 
 @end
