@@ -1,0 +1,5 @@
+CGIKit XML Interface Declaration – Specification
+
+CGI XIDL is used to as a IDL precursor for use with CGIApplication
+
+TODO: Write Specification
