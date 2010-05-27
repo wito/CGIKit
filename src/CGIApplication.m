@@ -127,8 +127,8 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
     if (contentLength != nil)
       len = strtol([contentLength UTF8String], NULL, 10);
     
-    printf("%@ %@\nContent-Length: %d\n", method, path, len);
-    printf("%@\n\n", requestEnvironment);
+    //printf("%@ %@\nContent-Length: %d\n", method, path, len);
+    //printf("%@\n\n", requestEnvironment);
     
     // Parameter parsing
     
@@ -176,7 +176,7 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
       
     }
     
-    printf("%@\n", requestParameters);
+    //printf("%@\n", requestParameters);
     
     // Parameter parsing done
     
