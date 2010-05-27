@@ -16,6 +16,21 @@ static const unsigned char FILE_HEADER[] = { 'C', 'K', 'A', 'r', 0, 0, 0, 1, 0xf
 
 @implementation CGICoder
 
+- (void)encodeObject:(id)value { @throw @"CGIKitAbstractViolationException"; }
+
+- (void)encodeLength:(uint32_t)value { @throw @"CGIKitAbstractViolationException"; }
+- (void)encodeInteger:(CGIInteger)value { @throw @"CGIKitAbstractViolationException"; }
+- (void)encodeUInteger:(CGIUInteger)value { @throw @"CGIKitAbstractViolationException"; }
+- (void)encodeString:(const unichar *)string { @throw @"CGIKitAbstractViolationException"; }
+- (void)encodeString:(const unichar *)string toLength:(CGIUInteger)length { @throw @"CGIKitAbstractViolationException"; }
+- (void)encodeData:(const unsigned char *)data length:(CGIUInteger)length { @throw @"CGIKitAbstractViolationException"; }
+
+- (id)decodeObject { @throw @"CGIKitAbstractViolationException"; }
+- (unichar *)decodeString { @throw @"CGIKitAbstractViolationException"; }
+- (CGIInteger)decodeInteger { @throw @"CGIKitAbstractViolationException"; }
+- (CGIUInteger)decodeUInteger { @throw @"CGIKitAbstractViolationException"; }
+- (unsigned char *)decodeDataWithLength:(CGIUInteger *)length { @throw @"CGIKitAbstractViolationException"; }
+
 @end
 
 @implementation CGIArchiver
