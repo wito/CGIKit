@@ -26,6 +26,10 @@ struct _CGIArrayBox {
 
 @implementation CGIArray
 
+- (NSString *)classNameForArchiver {
+  return @"CGIArray";
+}
+
 + (id)alloc
 {
   if ([CGIArray self] == self)
@@ -123,6 +127,19 @@ struct _CGIArrayBox {
   return self;
 }
 
+- (id)initWithCoder:(CGICoder *)coder {
+  self = [super init];
+  if (self) {
+    _count = [coder decodeUInteger];
+    _items = obc_malloc(sizeof(id));
+    NSUInteger i;
+    for (i = 0; i < _count; i++) {
+      _items[i] = [coder decodeObject];
+    }
+  }
+  return self;
+}
+
 - (id)objectAtIndex:(CGIUInteger)index {
   if (index >= _count) @throw @"CGIOutOfBoundsException";
   return _items[index];
@@ -192,6 +209,10 @@ static CGIPlaceholderArray *sharedPlaceHolder;
   return [[CGIConcreteArray alloc] initWithObjects:items count:count];
 }
 
+- (id)initWithCoder:(NSCoder *)coder {
+  return [[CGIConcreteArray alloc] initWithCoder:coder];
+}
+
 - (id)initWithObjects:(id)firstObject, ... {
   id* _items;
   CGIUInteger _count;
@@ -230,6 +251,10 @@ static CGIPlaceholderArray *sharedPlaceHolder;
 @end
 
 @implementation CGIMutableArray
+
+- (NSString *)classNameForArchiver {
+  return @"CGIMutableArray";
+}
 
 + (id)alloc
 {
