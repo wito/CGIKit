@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #import <objc/objc-api.h>
 #import "CGIKit/CGIFunctions.h"
+#import "CGIKit/CGICoder.h"
 
 typedef struct _CGIArrayBox CGIArrayBox;
 
@@ -26,7 +27,7 @@ struct _CGIArrayBox {
 
 @implementation CGIArray
 
-- (NSString *)classNameForArchiver {
+- (CGIString *)classNameForArchiver {
   return @"CGIArray";
 }
 
@@ -131,8 +132,8 @@ struct _CGIArrayBox {
   self = [super init];
   if (self) {
     _count = [coder decodeUInteger];
-    _items = obc_malloc(sizeof(id));
-    NSUInteger i;
+    _items = objc_malloc(sizeof(id));
+    CGIUInteger i;
     for (i = 0; i < _count; i++) {
       _items[i] = [coder decodeObject];
     }
@@ -209,7 +210,7 @@ static CGIPlaceholderArray *sharedPlaceHolder;
   return [[CGIConcreteArray alloc] initWithObjects:items count:count];
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (id)initWithCoder:(CGICoder *)coder {
   return [[CGIConcreteArray alloc] initWithCoder:coder];
 }
 
@@ -252,7 +253,7 @@ static CGIPlaceholderArray *sharedPlaceHolder;
 
 @implementation CGIMutableArray
 
-- (NSString *)classNameForArchiver {
+- (CGIString *)classNameForArchiver {
   return @"CGIMutableArray";
 }
 
