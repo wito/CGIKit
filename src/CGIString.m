@@ -429,7 +429,7 @@
     return [super alloc];
 }
 
-- (id)string {
++ (id)string {
   return [[[CGIUTF8String alloc] init] autorelease];
 }
 
