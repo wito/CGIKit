@@ -12,6 +12,19 @@
 
 - (id)initWithElementName:(CGIString *)htmlElement;
 
+- (void)addSubview:(CGIView *)subview;
+
 - (CGIString *)render;
+
+@end
+
+@interface CGITextView : CGIView {
+  CGIString *content;
+}
+
+- (id)initWithElementName:(CGIString *)htmlElement content:(CGIString *)content;
+
+- (CGIString *)content;
+- (void)setContent:(CGIString *)content;
 
 @end
