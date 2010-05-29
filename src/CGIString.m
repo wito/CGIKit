@@ -53,6 +53,10 @@
   return [[[CGISimpleCString alloc] initWithUTF8StringNoCopy:buf length:strlen(buf) freeWhenDone:YES] autorelease];
 }
 
+- (id)copy {
+  return [[CGIString alloc] initWithUTF8String:[self UTF8String]];
+}
+
 - (id)stringByAppendingString:(CGIString *)string {
   unichar *buf;
   asprintf(&buf, "%@%@", self, string);

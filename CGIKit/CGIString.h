@@ -11,6 +11,8 @@
 
 - (BOOL)writeToFile:(CGIString*)fileName atomically:(BOOL)flag;
 
+- (id)copy;
+
 @end*/
 
 @class CGIArray;
