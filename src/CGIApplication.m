@@ -183,7 +183,7 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
     CGIRequest *request = [CGIRequest requestWithPath:path parameters:requestParameters environment:requestEnvironment];
     
     FCGX_FPrintF(req.out,
-      "Content-type: text/html; charset=UTF-8\r\n\r\n%s",
+      "Content-type: application/xml; charset=UTF-8\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n%s",
       [[[self delegate] applicationDidReceiveRequest:request] UTF8String]
     );
     

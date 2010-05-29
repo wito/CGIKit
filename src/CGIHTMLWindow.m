@@ -12,7 +12,7 @@
 }
 
 - (CGIString *)title {
-  return [title copy];
+  return [[title copy] autorelease];
 }
 
 - (void)setTitle:(CGIString *)value {
@@ -21,7 +21,7 @@
 }
 
 - (CGIString *)render {
-  return [CGIString stringWithFormat:@"<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>%@</title></head><body></body></html>"];
+  return [CGIString stringWithFormat:@"<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>%@</title></head><body></body></html>", title];
 }
 
 @end
