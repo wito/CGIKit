@@ -11,7 +11,6 @@
 
 - (BOOL)writeToFile:(CGIString*)fileName atomically:(BOOL)flag;
 
-- (id)copy;
 
 @end*/
 
@@ -47,6 +46,8 @@
 
 - (BOOL)writeToFile:(CGIString *)filename atomic:(BOOL)flag;
 - (id)initWithContentsOfFile:(CGIString *)path;
+
+- (id)copy;
 
 @end
 

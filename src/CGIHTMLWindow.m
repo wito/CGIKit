@@ -1,12 +1,12 @@
 #include "CGIKit/CGIHTMLWindow.h"
 #include "CGIKit/CGIString.h"
 
-@implementation CGIWindow
+@implementation CGIHTMLWindow
 
-- (id)initWithTitle:(CGIString *)title {
+- (id)initWithTitle:(CGIString *)tval {
   self = [super init];
   if (self) {
-    [self setTitle:title];
+    [self setTitle:tval];
   }
   return self;
 }
