@@ -20,7 +20,8 @@ TEST = $(patsubst %,$(TODIR)/%,$(_TEST))
 _OBJ = CGIFunctions.o CGIAutoreleasePool.o CGIObject.o \
        CGIString.o CGIDictionary.o CGIArray.o \
        CGIParameters.o CGIApplication.o CGIRequest.o \
-       CGIXMLParser.o CGICoder.o CGIData.o
+       CGIXMLParser.o CGICoder.o CGIData.o \
+       CGIHTMLWindow.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
