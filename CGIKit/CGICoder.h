@@ -28,7 +28,7 @@
 /// @brief Decodes an object
 - (id)decodeObject;
 
-/// @bried Decodes a NUL-string of characters
+/// @brief Decodes a NUL-string of characters
 - (unichar *)decodeString;
 /// @brief Decodes a signed 64 bit integer
 - (CGIInteger)decodeInteger;
