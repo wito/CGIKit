@@ -15,3 +15,4 @@
 #import "CGIApplication.h"
 #import "CGIXMLParser.h"
 #import "CGIHTMLWindow.h"
+#import "CGIView.h"
