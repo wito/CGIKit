@@ -22,8 +22,26 @@
   return self;
 }
 
+- (CGIView *)superview {
+  return superview;
+}
+
+- (void)setSuperview:(CGIView *)view {
+  superview = view;
+}
+
 - (void)addSubview:(CGIView *)subview {
   [(CGIMutableArray *)subviews addObject:subview];
+  [subview setSuperview:self];
+}
+
+- (void)removeSubview:(CGIView *)subview {
+  [(CGIMutableArray *)subviews removeObjectIdenticalTo:subview];
+  [subview setSuperview:nil];
+}
+
+- (void)removeFromSuperview {
+  [superview removeSubview:self];
 }
 
 - (CGIString *)render {

@@ -4,15 +4,24 @@
 @class CGIString;
 
 @interface CGIView : CGIObject {
+  CGIView *superview;
+  id *dataSource;
+  id *delegate;
+
   CGIString *elementName;
   CGIString *elementID;
   CGIArray  *classes;
-  CGIArray  *subviews;
+  CGIArray  *subviews;  
 }
 
 - (id)initWithElementName:(CGIString *)htmlElement;
 
+- (CGIView *)superview;
+- (void)setSuperview:(CGIView *)superview;
 - (void)addSubview:(CGIView *)subview;
+- (void)removeSubview:(CGIView *)subview;
+
+- (void)removeFromSuperview;
 
 - (CGIString *)render;
 
