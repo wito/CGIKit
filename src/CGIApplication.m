@@ -192,6 +192,8 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
       printf("%@\n", e);
     }
     
+    FCGX_Finish_r(&req);
+    
     [pool release];
   }
 
