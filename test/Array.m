@@ -41,6 +41,11 @@ int CGIKitTest_Array () {
   printf("%s, %ld\n", [[yana description] UTF8String], [yana count]);
   [yana removeObjectAtIndex:1];
   printf("%s, %ld\n", [[yana description] UTF8String], [yana count]);
+  
+  [yana addObject:@"Hannelore"];
+  printf("%s, %ld\n", [[yana description] UTF8String], [yana count]);
+  [yana removeObjectIdenticalTo:@"Hannelore"];
+  printf("%s, %ld\n", [[yana description] UTF8String], [yana count]);
   [yana release];
   
   yana = [CGIMutableArray arrayWithObject:@"Shoop!"];
