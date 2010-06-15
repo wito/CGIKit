@@ -33,5 +33,6 @@
 - (void)addObject:(id)anItem;
 - (void)insertObject:(id)anItem atIndex:(CGIUInteger)index;
 - (void)removeObjectAtIndex:(CGIUInteger)index;
+- (void)removeObjectIdenticalTo:(id)anObjects;
 
 @end

@@ -277,6 +277,10 @@ static CGIPlaceholderArray *sharedPlaceHolder;
   @throw @"CGIKitAbstractViolationException";
 }
 
+- (void)removeObjectIdenticalTo:(id)object {
+  @throw @"CGIKitAbstractViolationException";
+}
+
 @end
 
 @implementation CGIPlaceholderMutableArray
@@ -470,6 +474,15 @@ static CGIPlaceholderMutableArray *sharedMutablePlaceHolder;
   else _last = oldBox->previous;
   
   _count--;
+}
+
+- (void)removeObjectIdenticalTo:(id)anObject {
+  CGIUInteger index;
+  
+  while ((index = [self indexOfObjectIdenticalTo:anObject]) != CGINotFound) {
+    [self removeObjectAtIndex:index];
+  }
+
 }
 
 - (void)dealloc {
