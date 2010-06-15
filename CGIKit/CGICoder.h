@@ -39,13 +39,6 @@
 
 @end
 
-@protocol CGICoding
-
-- (id)initWithCoder:(CGICoder *)coder;
-- (void)encodeWithCoder:(CGICoder *)coder;
-
-@end
-
 @interface CGIArchiver : CGICoder {
   CGIMutableData *_data;
   CGIMutableArray *_refTable;

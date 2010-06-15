@@ -8,6 +8,8 @@
 #import "CGIKit/CGIFunctions.h"
 #import <objc/objc-api.h>
 
+#import "CGIKit/CGICoding.h"
+
 #include <string.h>
 #include <stdlib.h>
 

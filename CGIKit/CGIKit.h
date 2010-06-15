@@ -6,6 +6,7 @@
 #import "CGIData.h"
 #import "CGIArray.h"
 #import "CGICoder.h"
+#import "CGICoding.h"
 #import "CGIRequest.h"
 //#import <CGIKit/CGISet.h>
 #import "CGIDictionary.h"
