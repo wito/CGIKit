@@ -267,10 +267,14 @@ static const unsigned char FILE_HEADER[] = { 'C', 'K', 'A', 'r', 0, 0, 0, 1, 0xf
   Class objectClass = objc_get_class(className);
   
   retval = [objectClass alloc];
-  
+
   [[_refTable objectAtIndex:1] setObject:retval forKey:@"CGIKIT_UNARCHIVER_OBJECT"];
-  
-  [retval initWithCoder:self];
+
+  retval = [retval initWithCoder:self];
+
+  if (retval != [[_refTable objectAtIndex:1] objectForKey:@"CGIKIT_UNARCHIVER_OBJECT"]) {
+    [[_refTable objectAtIndex:1] setObject:retval forKey:@"CGIKIT_UNARCHIVER_OBJECT"];
+  }
   
   _cursor = archiveCursor;
   return retval;

@@ -445,7 +445,6 @@ static CGIPlaceholderMutableArray *sharedMutablePlaceHolder;
     for (i = 0; i < c; i++) {
       [self addObject:[[coder decodeObject] autorelease]];
     }
-    assert(c == _count);
   }
   return self;
 }

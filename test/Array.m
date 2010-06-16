@@ -53,6 +53,14 @@ int CGIKitTest_Array () {
   yana = [[[CGIMutableArray alloc] initWithObject:@"Woop!"] autorelease];
   yana = [[[CGIMutableArray alloc] initWithObjects:@"Doom", @"Death", nil] autorelease];
   
+  CGIArray *archivableArray = [[[CGIArray alloc] initWithObjects:@"Archived!", @"Fo sho'", nil] autorelease];
+  CGIData *archivedData = [CGIArchiver archivedDataWithRootObject:archivableArray];
+  printf("Data: %@\n", [archivedData plistRepresentation]);
+  
+  archivableArray = [[CGIUnarchiver unarchiveObjectWithData:archivedData] autorelease];
+  printf("%s\n", [archivableArray class]->name);
+  printf("%@\n", archivableArray);
+  
   [pool release];
   
   return 0;
