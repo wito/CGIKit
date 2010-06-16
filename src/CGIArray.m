@@ -441,6 +441,15 @@ static CGIPlaceholderMutableArray *sharedMutablePlaceHolder;
   return self;
 }
 
+- (void)encodeWithCoder:(CGICoder *)coder {
+  [coder encodeUInteger:_count];
+  CGIArrayBox *aBox = _first;
+  while (aBox) {
+    [coder encodeObject:aBox->object];
+    aBox = aBox->next;
+  }
+}
+
 - (void)addObject:(id)anObject {
   if (!anObject)
     @throw @"CGINilArrayMemberException";
