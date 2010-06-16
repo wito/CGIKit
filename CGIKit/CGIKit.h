@@ -17,3 +17,4 @@
 #import "CGIXMLParser.h"
 #import "CGIHTMLWindow.h"
 #import "CGIView.h"
+#import "CGIViewDataSource.h"
