@@ -141,6 +141,14 @@ struct _CGIArrayBox {
   return self;
 }
 
+- (void)encodeWithCoder:(CGICoder *)coder {
+  [coder encodeUInteger:_count];
+  CGIUInteger i;
+  for (i = 0; i < _count; i++) {
+    [coder encodeObject:_items[i]];
+  }
+}
+
 - (id)objectAtIndex:(CGIUInteger)index {
   if (index >= _count) @throw @"CGIOutOfBoundsException";
   return _items[index];
