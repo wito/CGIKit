@@ -2,12 +2,13 @@
 
 #import "CGIObject.h"
 #import "CGIPropertyList.h"
+#import "CGICoding.h"
 /** @class CGIArray
  *  @brief An ordered collection of objects.
  *
  *  CGIArray is the abstract superclass of the CGIArray cluster and represents an ordered collection of objects for which random access is very fast.
  */
-@interface CGIArray : CGIObject <CGIPropertyListObject>
+@interface CGIArray : CGIObject <CGIPropertyListObject, CGICoding>
 
 - (CGIUInteger)count; ///< @brief Counts the array.
 - (id)objectAtIndex:(CGIUInteger)index; ///< @brief Accesses the array.

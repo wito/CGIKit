@@ -57,6 +57,15 @@ struct _CGIArrayBox {
   return 0;
 }
 
+- (id)initWithCoder:(CGICoder *)coder {
+  @throw @"CGIKitAbstractClassViolationException";
+  return nil;
+}
+
+- (void)encodeWithCoder:(CGICoder *)coder {
+  @throw @"CGIKitAbstractClassViolationException";
+}
+
 - (CGIString *)description {
   if (![self count]) return @"()";
   CGIUInteger i;
