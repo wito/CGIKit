@@ -135,9 +135,13 @@
   if (content) {
     [retval appendString:content];
   } else {
-    CGIUInteger i;
-    for (i = 0; i < [subviews count]; i++) {
-      [retval appendString:[[subviews objectAtIndex:i] render]];
+    if (dataSource) {
+      [retval appendString:[dataSource contentForView:self inContext:ctx]];
+    } else {
+      CGIUInteger i;
+      for (i = 0; i < [subviews count]; i++) {
+        [retval appendString:[[subviews objectAtIndex:i] render]];
+      }
     }
   }
   
@@ -147,3 +151,72 @@
 }
 
 @end
+
+@implementation CGIListView
+
+- (id)init {
+  return [self initWithElementName:@"ul"];
+}
+
+- (id)initWithElementName:(CGIString *)htmlElement {
+  self = [super initWithElementName:htmlElement];
+  if (self != nil) {
+    contentCell = [[CGITextView alloc] initWithElementName:@"li"];
+    [contentCell setDataSource:self];
+  }
+  return self;
+}
+
+- (CGIArray *)classesForView:(CGIView *)cell inContext:(id)ctx {
+  return nil;
+}
+
+- (CGIString *)elementIDForView:(CGIView *)cell inContext:(id)ctx {
+  return nil;
+}
+
+- (CGIString *)elementNameForView:(CGIView *)cell inContext:(id)ctx {
+  return @"li";
+}
+
+- (CGIString *)contentForView:(CGITextView *)cell inContext:(id)ctx {
+  void **context = (void **)ctx;
+  
+  id ctxt = context[0];
+  CGIUInteger *i = context[1];
+  
+  return [dataSource listView:self contentForRow:*i context:ctxt];
+}
+
+- (CGIString *)renderInContext:(id)ctx {
+  CGIMutableString *retval = [CGIMutableString string];
+  
+  [retval appendFormat:@"<%@", elementName];
+
+  if (elementID) {
+    [retval appendFormat:@" id=\"%@\"", elementID];
+  }
+  
+  [retval appendString:@">"];
+  
+  CGIUInteger c = [dataSource numberOfRowsInListView:self context:ctx];
+  CGIUInteger i;
+  
+  void *context[2] = {ctx,&i};
+  
+  for (i = 0; i < c; i++) {
+    [retval appendString:[contentCell renderInContext:(id)context]];
+  }
+  
+  [retval appendFormat:@"</%@>", elementName];
+  
+  return retval;
+}
+
+- (void)dealloc {
+  [contentCell release];
+  [super dealloc];
+}
+
+@end
+

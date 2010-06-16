@@ -1,4 +1,5 @@
 #import "CGIKit/CGIObject.h"
+#import "CGIKit/CGIViewDataSource.h"
 
 @class CGIArray;
 @class CGIString;
@@ -49,3 +50,10 @@
 - (void)setContent:(CGIString *)content;
 
 @end
+
+@interface CGIListView : CGIView <CGITextViewDataSource> {
+  CGITextView *contentCell;
+}
+
+@end
+
