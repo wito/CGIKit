@@ -5,13 +5,15 @@
 
 @interface CGIView : CGIObject {
   CGIView *superview;
-  id *dataSource;
-  id *delegate;
+  id dataSource;
+  id delegate;
+  
+  CGIUInteger tag;
 
   CGIString *elementName;
   CGIString *elementID;
   CGIArray  *classes;
-  CGIArray  *subviews;  
+  CGIArray  *subviews;
 }
 
 - (id)initWithElementName:(CGIString *)htmlElement;
@@ -20,6 +22,15 @@
 - (void)setSuperview:(CGIView *)superview;
 - (void)addSubview:(CGIView *)subview;
 - (void)removeSubview:(CGIView *)subview;
+
+- (id)dataSource;
+- (void)setDataSource:(id)delegate;
+
+- (id)delegate;
+- (void)setDelegate:(id)delegate;
+
+- (CGIUInteger)tag;
+- (void)setTag:(CGIUInteger)tag;
 
 - (void)removeFromSuperview;
 

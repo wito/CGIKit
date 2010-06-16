@@ -69,8 +69,32 @@
   [elementName release];
   [subviews release];
   
+  [dataSource release];
+  [delegate release];
+  
   [super dealloc];
 }
+
+- (id)dataSource {
+  return dataSource;
+}
+
+- (void)setDataSource:ds {
+  [dataSource release];
+  dataSource = [ds retain];
+}
+
+- (id)delegate {
+  return delegate;
+}
+
+- (void)setDelegate:dg {
+  [delegate release];
+  delegate = [dg retain];
+}
+
+- (CGIUInteger)tag { return tag; }
+- (void)setTag:(CGIUInteger)newTag { tag = newTag; }
 
 @end
 
