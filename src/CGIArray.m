@@ -311,6 +311,10 @@ static CGIPlaceholderMutableArray *sharedMutablePlaceHolder;
   return [[CGIConcreteMutableArray alloc] initWithObject:anObject];
 }
 
+- (id)initWithCoder:(CGICoder *)coder {
+  return [[CGIConcreteMutableArray alloc] initWithCoder:coder];
+}
+
 - (id)initWithObjects:(id)firstObject, ... {
   id* _items;
   CGIUInteger _count;
@@ -421,6 +425,18 @@ static CGIPlaceholderMutableArray *sharedMutablePlaceHolder;
     _first = _last = objc_calloc(1,sizeof(CGIArrayBox));
     _first->object = [anObject retain];
     _count = 1;
+  }
+  return self;
+}
+
+- (id)initWithCoder:(CGICoder *)coder {
+  self = [super init];
+  if (self) {
+    CGIUInteger i, c = [coder decodeUInteger];
+    for (i = 0; i < c; i++) {
+      [self addObject:[[coder decodeObject] autorelease]];
+    }
+    assert(c == _count);
   }
   return self;
 }
