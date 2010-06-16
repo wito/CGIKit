@@ -18,5 +18,6 @@
 - (void)setContentView:(CGIView *)value;
 
 - (CGIString *)render;
+- (CGIString *)renderInContext:(id)context;
 
 @end

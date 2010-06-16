@@ -35,6 +35,7 @@
 - (void)removeFromSuperview;
 
 - (CGIString *)render;
+- (CGIString *)renderInContext:(id)context;
 
 @end
 

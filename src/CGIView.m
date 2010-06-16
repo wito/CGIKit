@@ -45,6 +45,10 @@
 }
 
 - (CGIString *)render {
+  return [self renderInContext:nil];
+}
+
+- (CGIString *)renderInContext:(id)ctx {
   CGIMutableString *retval = [CGIMutableString string];
   
   [retval appendFormat:@"<%@", elementName];

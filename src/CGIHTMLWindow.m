@@ -23,7 +23,11 @@
 }
 
 - (CGIString *)render {
-  return [CGIString stringWithFormat:@"<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>%@</title></head>%@</html>", title, [contentView render]];
+  return [self renderInContext:nil];
+}
+
+- (CGIString *)renderInContext:(id)ctx {
+  return [CGIString stringWithFormat:@"<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>%@</title></head>%@</html>", title, [contentView renderInContext:ctx]];
 }
 
 - (CGIView *)contentView {
