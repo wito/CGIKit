@@ -19,3 +19,4 @@
 #import "CGIView.h"
 #import "CGIViewDataSource.h"
 #import "CGIDBI.h"
+#import "CGIDBIQueryDelegate.h"

@@ -1,4 +1,5 @@
 #import "CGIKit/CGIObject.h"
+#import "CGIKit/CGIDBIQueryDelegate.h"
 
 @class CGIString;
 @class CGIDictionary;
@@ -12,6 +13,6 @@
 - (BOOL)connect;
 - (void)close;
 
-- (CGIUInteger)doQuery:(CGIDictionary *)query modalDelegate:(id)delegate;
+- (CGIUInteger)doQuery:(CGIDictionary *)query modalDelegate:(id<CGIDBIQueryDelegate>)delegate;
 
 @end

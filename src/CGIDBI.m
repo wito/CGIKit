@@ -29,7 +29,7 @@
 
 - (void)close {}
 
-- (CGIUInteger)doQuery:(CGIDictionary *)query modalDelegate:(id)delegate {
+- (CGIUInteger)doQuery:(CGIDictionary *)query modalDelegate:(id<CGIDBIQueryDelegate>)delegate {
   @throw @"CGIAbstractViolationException";
   return 0;
 }
