@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-fobjc-exceptions -fconstant-string-class=CGIConstantString -fPIC -g -I. -I/usr/include/libxml2 -Wno-format
 #CFLAGS=-Wall -I/usr/include/libxml2 -Iinc -D DEBUG
 SOFLAGS=-shared -Wl,-soname,libcgikit.so.0
-LFLAGS=-lobjc -lfcgi -lxml2
+LFLAGS=-lobjc -lfcgi -lxml2 -lsqlite3
 #LFLAGS=-lfcgi -lsqlite3 -lxml2
 TLFLAGS=-lcgikit
 
@@ -14,14 +14,15 @@ VERSION = 0.0.1
 
 .PHONY: clean doc install
 
-_TEST = harness.o String.o Array.o Archiver.o
+_TEST = harness.o String.o Array.o Archiver.o DBI.o
 TEST = $(patsubst %,$(TODIR)/%,$(_TEST))
 
 _OBJ = CGIFunctions.o CGIAutoreleasePool.o CGIObject.o \
        CGIString.o CGIDictionary.o CGIArray.o \
        CGIParameters.o CGIApplication.o CGIRequest.o \
        CGIXMLParser.o CGICoder.o CGIData.o \
-       CGIHTMLWindow.o CGIView.o
+       CGIHTMLWindow.o CGIView.o CGIDBI.o \
+       CGISQLiteDBI.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 

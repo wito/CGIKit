@@ -18,3 +18,4 @@
 #import "CGIHTMLWindow.h"
 #import "CGIView.h"
 #import "CGIViewDataSource.h"
+#import "CGIDBI.h"
