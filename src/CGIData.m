@@ -19,7 +19,7 @@
   return [self initWithBytes:[data bytes] length:[data length]];
 }
 
-- (id)initWithBytes:(unsigned char *)data length:(CGIUInteger)length {
+- (id)initWithBytes:(const unsigned char *)data length:(CGIUInteger)length {
   self = [super init];
   if (self != nil) {
     if (length) _bytes = malloc(length);

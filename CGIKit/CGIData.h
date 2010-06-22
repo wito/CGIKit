@@ -10,7 +10,7 @@
 }
 
 - (id)initWithData:(CGIData *)data;
-- (id)initWithBytes:(unsigned char *)data length:(CGIUInteger)length;
+- (id)initWithBytes:(const unsigned char *)data length:(CGIUInteger)length;
 
 - (CGIUInteger)length;
 - (unsigned char *)bytes;
