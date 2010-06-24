@@ -13,6 +13,8 @@
 - (CGIUInteger)count; ///< @brief Counts the array.
 - (id)objectAtIndex:(CGIUInteger)index; ///< @brief Accesses the array.
 
+- (CGIString *)stringByJoiningComponentsWithString:(CGIString *)sep;
+
 @end
 
 /// @group

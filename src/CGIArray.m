@@ -66,6 +66,21 @@ struct _CGIArrayBox {
   @throw @"CGIKitAbstractClassViolationException";
 }
 
+- (CGIString *)stringByJoiningComponentsWithString:(CGIString *)sep {
+  CGIUTF8String *retval = [CGIUTF8String stringWithString:@""];
+  
+  CGIUInteger count = [self count];
+  CGIUInteger i;
+  
+  for (i = 0; i < count; i++) {
+    [retval appendString:[[self objectAtIndex:i] description]];
+    if (i + 1 < count)
+      [retval appendString:sep];
+  }
+  
+  return retval;
+}
+
 - (CGIString *)description {
   if (![self count]) return @"()";
   CGIUInteger i;
