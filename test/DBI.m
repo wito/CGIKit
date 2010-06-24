@@ -1,6 +1,20 @@
 #import "CGIKit/CGIKit.h"
 #include <stdio.h>
 
+@interface CGIKitTestDBIQueryDelegate : CGIObject <CGIDBIQueryDelegate> {
+
+}
+
+@end
+
+@implementation CGIKitTestDBIQueryDelegate
+
+- (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row {
+  printf("%@\n", row);
+}
+
+@end
+
 int CGIKitTest_DBI () {
 
   // CGIDBI
@@ -9,7 +23,14 @@ int CGIKitTest_DBI () {
   
   CGIDBI *dbi = [[CGIDBI alloc] initWithDatabase:@"dbi:SQLite:test/test.db"];
   
+  CGIArray *queryData = [CGIArray arrayWithObject:@"FOO"];
+  CGIString *queryString = @"SELECT * FROM test_table WHERE text LIKE ?;";
+  
+  CGIDictionary *query = [[[CGIDictionary alloc] initWithObjectsAndKeys:queryData, @"CGI_DBI_SQL_DATA", queryString, @"CGI_DBI_SQL_SENTENCE", nil] autorelease];
+    
   [dbi connect];
+  
+  [dbi doQuery:query modalDelegate:[[CGIKitTestDBIQueryDelegate new] autorelease]];
   
   [dbi close];
   
