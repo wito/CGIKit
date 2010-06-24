@@ -22,7 +22,7 @@ _OBJ = CGIFunctions.o CGIAutoreleasePool.o CGIObject.o \
        CGIParameters.o CGIApplication.o CGIRequest.o \
        CGIXMLParser.o CGICoder.o CGIData.o \
        CGIHTMLWindow.o CGIView.o CGIDBI.o \
-       CGISQLiteDBI.o
+       CGISQLiteDBI.o CGINumber.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
