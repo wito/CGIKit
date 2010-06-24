@@ -232,6 +232,25 @@ CGIDictBucket **CGIDictionaryGrowBacking(CGIDictBucket **backing, CGIUInteger ol
   return [retval autorelease];
 }
 
+- (CGIArray *)allValues {
+  id *anArray = objc_malloc(sizeof(id)*_count);
+  id *iter = anArray;
+  CGIUInteger i;
+  for (i = 0; i < _capacity; i++) {
+    CGIDictBucket *aBucket;
+    if (aBucket = _buckets[i]) {
+      *iter++ = aBucket->object;
+      while (aBucket = aBucket->next) {
+        *iter++ = aBucket->object;
+      }
+    }
+  }
+  assert(iter - anArray == _count);
+  CGIArray *retval = [[CGIArray alloc] initWithObjects:anArray count:[self count]];
+  objc_free(anArray);
+  return [retval autorelease];
+}
+
 - (void)dealloc {
   CGIUInteger i;
   for (i = 0; i < _capacity; i++) {
