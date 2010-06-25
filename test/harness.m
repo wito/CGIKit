@@ -3,6 +3,8 @@
 #import <stdlib.h>
 
 int main () {
+  CGILog(@"Test");
+  
   @try {
     CGIKitTest_Array();
     CGIKitTest_String();
