@@ -50,7 +50,7 @@
   va_start(ap, format);
   vasprintf(&buf, [format UTF8String], ap);
   va_end(ap);
-  return [[[CGISimpleCString alloc] initWithUTF8StringNoCopy:buf length:strlen(buf) freeWhenDone:YES] autorelease];
+  return [[[CGIUTF8String alloc] initWithUTF8StringNoCopy:buf length:strlen(buf) freeWhenDone:YES] autorelease];
 }
 
 - (id)copy {
@@ -393,7 +393,7 @@
     _bytes[_length] = 0;
   }
   return self;
- }
+}
 
  - (const unichar*)UTF8String {
   return _bytes;
@@ -431,6 +431,10 @@
 
 + (id)string {
   return [[[CGIUTF8String alloc] init] autorelease];
+}
+
++ (id)stringWithString:(CGIString *)string {
+  return [CGIUTF8String stringWithString:string];
 }
 
 - (id)initWithContentsOfFile:(CGIString *)path {
@@ -538,6 +542,16 @@ static CGIMutablePlaceholderString *sharedMutablePlaceholder;
     _bytes = objc_malloc(_length + 1);
     memcpy(_bytes, bytes, _length);
     _bytes[_length] = '\0';
+  }
+  return self;
+}
+
+- (id)initWithUTF8StringNoCopy:(unichar*)cString length:(CGIUInteger)length freeWhenDone:(BOOL)free {
+  self = [super init];
+  if (self != nil) {
+    _length = length;
+    _bytes = cString;
+    _bytes[_length] = 0;
   }
   return self;
 }
