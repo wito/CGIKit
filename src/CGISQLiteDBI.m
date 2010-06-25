@@ -44,6 +44,8 @@
   CGIArray *data = [query objectForKey:@"CGI_DBI_SQL_DATA"];
   CGIUInteger parameterCount = [data count];
   
+  printf("%s: %@\n", zSql, data);
+  
   sqlite3_stmt *statement;
   sqlite3_prepare_v2(handle, zSql, -1, &statement, NULL);
   
@@ -108,8 +110,48 @@
 
 - (CGIUInteger)search:(CGIDictionary *)query table:(CGIString *)table properties:(CGIDictionary *)properties modalDelegate:(id<CGIDBIQueryDelegate>)delegate {
   CGIMutableArray *predicates = nil;
-  CGIMutableString *zSQL = [CGIMutableString stringWithFormat:@"SELECT * FROM \"%@\"", table];
+  
+  CGIArray *columns = [properties objectForKey:@"COLUMNS"];
+  CGIMutableString *zSQL;
+  
+  if (columns) {
+    zSQL = [CGIMutableString stringWithFormat:@"SELECT %@ FROM \"%@\" \"me\"", [columns stringByJoiningComponentsWithString:@", "], table];
+  } else {
+    zSQL = [CGIMutableString stringWithFormat:@"SELECT * FROM \"%@\" \"me\"", table];
+  }
+  
   CGIArray *data = nil;
+  
+  id joins = [properties objectForKey:@"JOIN"];
+  CGIMutableString *joinString;
+  
+  // Do we want to join tables?
+  if (joins) {
+    joinString = [CGIMutableString stringWithString:@""];
+
+    if (![joins isKindOfClass:[CGIArray self]]) { // Arrayify if neccessary
+      printf("Boom\n");
+      joins = [CGIArray arrayWithObject:joins];
+    }
+    
+    CGIUInteger i;
+    for (i = 0; i < [joins count]; i++) {
+      CGIDictionary *join = [joins objectAtIndex:i];
+      
+      CGIString *leftTable = [join objectForKey:@"LEFT_TABLE"];
+      if (!leftTable) leftTable = @"me";
+      
+      CGIString *rightTable = [join objectForKey:@"RIGHT_TABLE"];
+      CGIString *rightAlias = [join objectForKey:@"RIGHT_ALIAS"];
+      if (!rightAlias) rightAlias = rightTable;
+      
+      CGIString *leftCol = [join objectForKey:@"LEFT_COLUMN"];
+      CGIString *rightCol = [join objectForKey:@"RIGHT_COLUMN"];
+      
+      [joinString appendFormat:@" JOIN \"%@\" \"%@\" ON \"%@\".\"%@\" = \"%@\".\"%@\"", rightTable, rightAlias, leftTable, leftCol, rightAlias, rightCol];
+    }
+    [zSQL appendString:joinString];
+  }
   
   if (query) {
     CGIArray *qcols = [query allKeys];
@@ -118,11 +160,23 @@
     predicates = [CGIMutableArray array];
     CGIUInteger i;
     for (i = 0; i < [qcols count]; i++) {
-      [predicates addObject:[CGIString stringWithFormat:@"\"%@\" = ?", [qcols objectAtIndex:i]]];
+      [predicates addObject:[CGIString stringWithFormat:@"\"me\".\"%@\" = ?", [qcols objectAtIndex:i]]];
     }
     
     [zSQL appendFormat:@" WHERE %@", [predicates stringByJoiningComponentsWithString:@" AND "]];
+  }
   
+  CGIString *order_by = [properties objectForKey:@"ORDER_BY"];
+  if (order_by) {
+    if ([order_by isKindOfClass:[CGIString self]]) { // default order
+      [zSQL appendFormat:@" ORDER BY %@", order_by];
+    } else {
+      @throw @"CGINotImplementedException";
+    }
+  }
+  
+  if (!data) {
+    data = [CGIArray array];
   }
 
   return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:data, @"CGI_DBI_SQL_DATA", zSQL, @"CGI_DBI_SQL_SENTENCE", nil] autorelease] modalDelegate:delegate];
