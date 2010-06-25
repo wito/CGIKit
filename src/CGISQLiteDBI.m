@@ -3,6 +3,7 @@
 #import "CGIKit/CGIArray.h"
 #import "CGIKit/CGIData.h"
 #import "CGIKit/CGIDictionary.h"
+#import "CGIKit/CGINumber.h"
 
 #include <sqlite3.h>
 
@@ -26,6 +27,9 @@
 
 - (BOOL)connect {
   int ret = sqlite3_open_v2([path UTF8String], &handle, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, NULL);
+  if (handle) {
+    sqlite3_exec(handle, "PRAGMA foreign_keys = ON;", NULL, NULL, NULL);
+  }
   return !ret;
 }
 
@@ -51,6 +55,8 @@
       sqlite3_bind_text(statement, i, [parameter UTF8String], -1, SQLITE_STATIC);
     } else if ([parameter isKindOfClass:[CGIData self]]) {
       sqlite3_bind_blob(statement, i, [parameter bytes], [parameter length], SQLITE_STATIC);
+    } else if ([parameter isKindOfClass:[CGINumber self]]) {
+      sqlite3_bind_int64(statement, i, [parameter integerValue]);
     }
   }
   
@@ -72,6 +78,10 @@
         const unsigned char *blob = sqlite3_column_blob(statement, j);
         CGIData *blobData = [[[CGIData alloc] initWithBytes:blob length:blobsize] autorelease];
         [row addObject:blobData];
+      } else if (type == SQLITE_INTEGER) {
+        CGIInteger num = sqlite3_column_int64(statement, j);
+        CGINumber *number = [CGINumber numberWithInteger:num];
+        [row addObject:number];
       } else {
         const unichar *str = sqlite3_column_text(statement, j);
         CGIString *string = [CGIString stringWithUTF8String:str];
@@ -87,6 +97,23 @@
   return i;
 }
 
+- (CGIUInteger)search:(CGIDictionary *)query table:(CGIString *)table properties:(CGIDictionary *)properties modalDelegate:(id<CGIDBIQueryDelegate>)delegate {
+  CGIArray *qcols = [query allKeys];
+  CGIArray *data = [query allValues];
+
+  CGIMutableArray *predicates = [CGIMutableArray array];
+  CGIUInteger i;
+  for (i = 0; i < [qcols count]; i++) {
+    [predicates addObject:[CGIString stringWithFormat:@"\"%@\" = ?", [qcols objectAtIndex:i]]];
+  }
+  
+  CGIString *zSQL = [CGIString stringWithFormat:@"SELECT * FROM \"%@\" WHERE %@;", table, [predicates stringByJoiningComponentsWithString:@" AND "]];
+  return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:data, @"CGI_DBI_SQL_DATA", zSQL, @"CGI_DBI_SQL_SENTENCE", nil] autorelease] modalDelegate:delegate];
+}
+
+- (CGIUInteger)search:(CGIDictionary *)query table:(CGIString *)table modalDelegate:(id<CGIDBIQueryDelegate>)delegate {
+  return [self search:query table:table properties:nil modalDelegate:delegate];
+}
 
 - (void)dealloc {
   [path release];
