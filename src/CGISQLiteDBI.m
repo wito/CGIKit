@@ -44,8 +44,6 @@
   CGIArray *data = [query objectForKey:@"CGI_DBI_SQL_DATA"];
   CGIUInteger parameterCount = [data count];
   
-  printf("%s: %@\n", zSql, data);
-  
   sqlite3_stmt *statement;
   sqlite3_prepare_v2(handle, zSql, -1, &statement, NULL);
   
@@ -130,7 +128,6 @@
     joinString = [CGIMutableString stringWithString:@""];
 
     if (![joins isKindOfClass:[CGIArray self]]) { // Arrayify if neccessary
-      printf("Boom\n");
       joins = [CGIArray arrayWithObject:joins];
     }
     
