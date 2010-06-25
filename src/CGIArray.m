@@ -117,7 +117,7 @@ struct _CGIArrayBox {
 
 - (BOOL)isEqual:(id)other {
   if ([super isEqual:other]) return YES;
-  if (![other isKindOfClass:[CGIArray class]]) return NO;
+  if (![other isKindOfClass:[CGIArray self]]) return NO;
   if ([other count] != [self count]) return NO;
   CGIUInteger i;
   for (i = 0; i < [self count]; i++) {
