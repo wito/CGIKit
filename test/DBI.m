@@ -27,10 +27,12 @@ int CGIKitTest_DBI () {
   CGIString *queryString = @"SELECT * FROM test_table WHERE text LIKE ?;";
   
   CGIDictionary *query = [[[CGIDictionary alloc] initWithObjectsAndKeys:queryData, @"CGI_DBI_SQL_DATA", queryString, @"CGI_DBI_SQL_SENTENCE", nil] autorelease];
+  CGIDictionary *otherQuery = [[[CGIDictionary alloc] initWithObjectsAndKeys:@"FOO", @"text", nil] autorelease];
     
   [dbi connect];
   
   [dbi doQuery:query modalDelegate:[[CGIKitTestDBIQueryDelegate new] autorelease]];
+  [dbi search:otherQuery table:@"test_table" modalDelegate:[[CGIKitTestDBIQueryDelegate new] autorelease]];
   
   [dbi close];
   
