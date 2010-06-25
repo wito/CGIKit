@@ -12,3 +12,7 @@ id CGIAllocateObject(Class isa, size_t extra);
 
 /// @brief Creates a new CGIRange.
 CGIRange CGIMakeRange (CGIUInteger loc, CGIUInteger len);
+
+@class CGIString;
+/// @brief Prints format to stderr
+void CGILog(CGIString *format, ...);

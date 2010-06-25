@@ -7,8 +7,11 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.*/
 #import "CGIKit/CGIFunctions.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <printf.h>
+#include <stdarg.h>
+#include <time.h>
 #import "CGIKit/CGIString.h"
 #import "CGIKit/CGIXMLParser.h"
 #import "CGIKit/CGIPropertyList.h"
@@ -189,5 +192,23 @@ BOOL CGIWritePropertyList (id<CGIPropertyListObject> root, CGIString *filename) 
 
 id<CGIPropertyListObject> CGIReadPropertyList (CGIString *data) {
   return [[[CGIPropertyListDeserializer alloc] init] parseXMLPropertyList:data];
+}
+
+void CGILog(CGIString *format, ...) {
+  char outstr[200];
+  time_t t;
+  struct tm *tmp;
+
+  t = time(NULL);
+  tmp = localtime(&t);
+
+  strftime(outstr, sizeof(outstr), "%FT%T%z", tmp);
+  
+  CGIString *fmt = [CGIString stringWithFormat:@"%s: %@\n", outstr, format];
+
+  va_list ap;
+  va_start(ap, format);
+  vfprintf(stderr, [fmt UTF8String], ap);
+  va_end(ap);
 }
 
