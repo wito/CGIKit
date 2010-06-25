@@ -29,11 +29,18 @@ int CGIKitTest_DBI () {
   
   CGIDictionary *query = [[[CGIDictionary alloc] initWithObjectsAndKeys:queryData, @"CGI_DBI_SQL_DATA", queryString, @"CGI_DBI_SQL_SENTENCE", nil] autorelease];
   CGIDictionary *otherQuery = [[[CGIDictionary alloc] initWithObjectsAndKeys:@"FOO", @"text", nil] autorelease];
+  
+  CGIDictionary *props = [[[CGIDictionary alloc] initWithObjectsAndKeys:
+    [[[CGIDictionary alloc] initWithObjectsAndKeys:@"id", @"LEFT_COLUMN", @"id", @"RIGHT_COLUMN", @"test_table_two", @"RIGHT_TABLE", nil] autorelease], @"JOIN",
+    [[[CGIArray alloc] initWithObjects:@"me.id", @"test_table_two.text", nil] autorelease], @"COLUMNS",
+    @"me.text", @"ORDER_BY",
+    nil
+  ] autorelease];
     
   [dbi connect];
   
   [dbi doQuery:query modalDelegate:[[CGIKitTestDBIQueryDelegate new] autorelease]];
-  [dbi search:otherQuery table:@"test_table" modalDelegate:[[CGIKitTestDBIQueryDelegate new] autorelease]];
+  [dbi search:nil table:@"test_table" properties:props modalDelegate:[[CGIKitTestDBIQueryDelegate new] autorelease]];
   
   [dbi close];
   
