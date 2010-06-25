@@ -104,7 +104,7 @@
 }
 
 - (BOOL)isEqual:(id)other {
-  return ([super isEqual:other] && [other isKindOfClass:[CGIString class]] && [self isEqualToString:other]);
+  return ([super isEqual:other] && [other isKindOfClass:[CGIString self]] && [self isEqualToString:other]);
 }
 
 - (BOOL)isEqualToString:(CGIString *)other {
