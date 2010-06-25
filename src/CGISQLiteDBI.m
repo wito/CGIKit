@@ -98,16 +98,24 @@
 }
 
 - (CGIUInteger)search:(CGIDictionary *)query table:(CGIString *)table properties:(CGIDictionary *)properties modalDelegate:(id<CGIDBIQueryDelegate>)delegate {
-  CGIArray *qcols = [query allKeys];
-  CGIArray *data = [query allValues];
-
-  CGIMutableArray *predicates = [CGIMutableArray array];
-  CGIUInteger i;
-  for (i = 0; i < [qcols count]; i++) {
-    [predicates addObject:[CGIString stringWithFormat:@"\"%@\" = ?", [qcols objectAtIndex:i]]];
-  }
+  CGIMutableArray *predicates = nil;
+  CGIMutableString *zSQL = [CGIMutableString stringWithFormat:@"SELECT * FROM \"%@\"", table];
+  CGIArray *data = nil;
   
-  CGIString *zSQL = [CGIString stringWithFormat:@"SELECT * FROM \"%@\" WHERE %@;", table, [predicates stringByJoiningComponentsWithString:@" AND "]];
+  if (query) {
+    CGIArray *qcols = [query allKeys];
+    data = [query allValues];
+
+    predicates = [CGIMutableArray array];
+    CGIUInteger i;
+    for (i = 0; i < [qcols count]; i++) {
+      [predicates addObject:[CGIString stringWithFormat:@"\"%@\" = ?", [qcols objectAtIndex:i]]];
+    }
+    
+    [zSQL appendFormat:@" WHERE %@", [predicates stringByJoiningComponentsWithString:@" AND "]];
+  
+  }
+
   return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:data, @"CGI_DBI_SQL_DATA", zSQL, @"CGI_DBI_SQL_SENTENCE", nil] autorelease] modalDelegate:delegate];
 }
 
