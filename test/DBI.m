@@ -9,8 +9,9 @@
 
 @implementation CGIKitTestDBIQueryDelegate
 
-- (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row {
+- (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row columns:(CGIArray *)colnames{
   printf("%@\n", row);
+  printf("%@\n", colnames);
 }
 
 @end
@@ -24,7 +25,7 @@ int CGIKitTest_DBI () {
   CGIDBI *dbi = [[CGIDBI alloc] initWithDatabase:@"dbi:SQLite:test/test.db"];
   
   CGIArray *queryData = [CGIArray arrayWithObject:@"FOO"];
-  CGIString *queryString = @"SELECT * FROM test_table WHERE text LIKE ?;";
+  CGIString *queryString = @"SELECT me.text, foo.text FROM test_table AS me join test_table_two as foo";
   
   CGIDictionary *query = [[[CGIDictionary alloc] initWithObjectsAndKeys:queryData, @"CGI_DBI_SQL_DATA", queryString, @"CGI_DBI_SQL_SENTENCE", nil] autorelease];
   CGIDictionary *otherQuery = [[[CGIDictionary alloc] initWithObjectsAndKeys:@"FOO", @"text", nil] autorelease];
