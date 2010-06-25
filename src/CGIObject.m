@@ -144,7 +144,7 @@ CGIUInteger CGIKit_INTERNAL_CGIRetainCount(id self) {
 - (BOOL)isKindOfClass:(Class)class {
   Class aClass = [self class];
   do {
-    if ([self class] == aClass) return YES;
+    if (class == aClass) return YES;
   } while (aClass = class_get_super_class(aClass));
   return NO;
 }
@@ -163,6 +163,10 @@ CGIUInteger CGIKit_INTERNAL_CGIRetainCount(id self) {
 
 + (Class)superclass {
   return class_get_super_class(self);
+}
+
++ (Class)class {
+  return self;
 }
 
 - (BOOL)respondsToSelector:(SEL)selector {
