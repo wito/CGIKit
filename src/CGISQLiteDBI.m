@@ -61,9 +61,18 @@
   }
   
   CGIUInteger retcol = sqlite3_column_count(statement);
-  
+  CGIMutableArray *colnames = [CGIMutableArray array];
   
   CGIUInteger j;
+  
+  for (j = 0; j < retcol; j++) {
+    const unichar *colname = sqlite3_column_name(statement, j);
+    CGIString *columnName = [CGIString stringWithUTF8String:colname];
+    const unichar *tablename = sqlite3_column_table_name(statement, j);
+    CGIString *tableName = [CGIString stringWithUTF8String:tablename];
+    [colnames addObject:[CGIString stringWithFormat:@"%@.%@", tableName, columnName]];
+  }
+  
   i = 0;
   while (sqlite3_step(statement) == SQLITE_ROW) {
     CGIMutableArray *row = [[[CGIMutableArray alloc] init] autorelease];
@@ -89,7 +98,7 @@
       }
     }
     
-    [delegate DBI:self didGetRow:row];
+    [delegate DBI:self didGetRow:row columns:colnames];
   }
   
   sqlite3_finalize(statement);

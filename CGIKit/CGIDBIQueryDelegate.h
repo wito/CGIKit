@@ -3,6 +3,6 @@
 
 @protocol CGIDBIQueryDelegate
 
-- (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row;
+- (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row columns:(CGIArray *)columnNames;
 
 @end
