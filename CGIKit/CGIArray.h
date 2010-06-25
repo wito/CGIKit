@@ -21,6 +21,7 @@
 /// @brief Methods related to array creation and initializiation.
 @interface CGIArray (CGIArrayCreation)
 
++ (id)array;
 + (id)arrayWithObject:(id)anObject; ///< @brief Creates a single-object array.
 
 - (id)initWithObject:(id)anObject; ///< @brief Initializes an array with one item.

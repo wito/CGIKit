@@ -43,6 +43,10 @@ struct _CGIArrayBox {
   return [[[self alloc] initWithObjects:anObject,nil] autorelease];
 }
 
++ (id)array {
+  return [[[self alloc] init] autorelease];
+}
+
 - (id)init {
   return [super init];
 }
