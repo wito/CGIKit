@@ -1,8 +1,11 @@
 #import "CGIKit/CGIObject.h"
 #import "CGIKit/CGIDBIQueryDelegate.h"
 
-@class CGIString;
 @class CGIDictionary;
+@class CGIString;
+
+extern CGIString *CGIDBIQueryStringKey;
+extern CGIString *CGIDBIQueryDataKey;
 
 @interface CGIDBI : CGIObject {
   

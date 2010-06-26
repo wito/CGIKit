@@ -7,6 +7,9 @@
 
 #include <sqlite3.h>
 
+CGIString *CGIDBIQueryStringKey = @"CGIDBIQueryStringKeyName";
+CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
+
 @interface CGISQLiteDBI : CGIDBI {
   sqlite3 *handle;
   CGIString *path;
@@ -39,9 +42,9 @@
 }
 
 - (CGIUInteger)doQuery:(CGIDictionary *)query modalDelegate:(id <CGIDBIQueryDelegate>)delegate {
-  CGIString *sql = [query objectForKey:@"CGI_DBI_SQL_SENTENCE"];
+  CGIString *sql = [query objectForKey:CGIDBIQueryStringKey];
   const char *zSql = [sql UTF8String];
-  CGIArray *data = [query objectForKey:@"CGI_DBI_SQL_DATA"];
+  CGIArray *data = [query objectForKey:CGIDBIQueryDataKey];
   CGIUInteger parameterCount = [data count];
   
   sqlite3_stmt *statement;
@@ -176,7 +179,7 @@
     data = [CGIArray array];
   }
 
-  return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:data, @"CGI_DBI_SQL_DATA", zSQL, @"CGI_DBI_SQL_SENTENCE", nil] autorelease] modalDelegate:delegate];
+  return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:data, CGIDBIQueryDataKey, zSQL, CGIDBIQueryStringKey, nil] autorelease] modalDelegate:delegate];
 }
 
 - (CGIUInteger)search:(CGIDictionary *)query table:(CGIString *)table modalDelegate:(id<CGIDBIQueryDelegate>)delegate {
