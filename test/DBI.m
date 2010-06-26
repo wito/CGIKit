@@ -27,7 +27,7 @@ int CGIKitTest_DBI () {
   CGIArray *queryData = [CGIArray arrayWithObject:@"FOO"];
   CGIString *queryString = @"SELECT me.text, foo.text FROM test_table AS me join test_table_two as foo";
   
-  CGIDictionary *query = [[[CGIDictionary alloc] initWithObjectsAndKeys:queryData, @"CGI_DBI_SQL_DATA", queryString, @"CGI_DBI_SQL_SENTENCE", nil] autorelease];
+  CGIDictionary *query = [[[CGIDictionary alloc] initWithObjectsAndKeys:queryData, CGIDBIQueryDataKey, queryString, CGIDBIQueryStringKey, nil] autorelease];
   CGIDictionary *otherQuery = [[[CGIDictionary alloc] initWithObjectsAndKeys:@"FOO", @"text", nil] autorelease];
   
   CGIDictionary *props = [[[CGIDictionary alloc] initWithObjectsAndKeys:
