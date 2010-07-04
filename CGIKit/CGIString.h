@@ -25,6 +25,8 @@
 
 - (BOOL)isEqualToString:(CGIString *)other;
 
+- (CGIString *)lowercaseString;
+
 @end
 
 @interface CGIString (CGIStringCreation)

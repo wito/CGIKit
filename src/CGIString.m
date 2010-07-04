@@ -24,6 +24,24 @@
 
 @implementation CGIString
 
+- (CGIString *)lowercaseString {
+  const unichar *myValue = [self UTF8String];
+  CGIUInteger myLen = [self lengthOfBytes];
+  unichar *newValue = malloc(myLen + 1);
+  memcpy(newValue, myValue, myLen);
+  newValue[myLen] = 0;
+  
+  unichar *iter = newValue;
+  while (*iter) {
+    if (isascii(*iter) && isupper(*iter)) {
+      *iter = tolower(*iter);
+    }
+    ++iter;
+  }
+  
+  return [CGIString stringWithUTF8String:newValue];
+}
+
 - (CGIString *)classNameForArchiver {
   return @"CGIString";
 }
