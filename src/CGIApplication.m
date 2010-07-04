@@ -16,6 +16,8 @@ id CGIApp = nil;
 
 int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIString *applicationName) {
 
+  daemon(YES,NO);
+
   id pool = [[CGIAutoreleasePool alloc] init];
   
   CGIApplication *application = [[CGIApplication alloc] initWithArguments:argv count:argc environment:envp];
@@ -29,6 +31,7 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
   id infoPlist = CGIReadPropertyList(infoPlistData);
   
   [application setDelegate:[[objc_get_class([[infoPlist objectForKey:@"CGIKitApplicationDelegateClass"] UTF8String]) alloc] init]];
+  [application setApplicationInfo:infoPlist];
   
   //printf("%@\n", infoPlist);
   
@@ -86,6 +89,17 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
 
 + (id)sharedApplication {
   return CGIApp;
+}
+
+- (CGIDictionary *)applicationInfo {
+  return applicationInfo;
+}
+
+- (void)setApplicationInfo:(CGIDictionary *)infoPlist {
+  if (applicationInfo != infoPlist) {
+    [applicationInfo release];
+    applicationInfo = [infoPlist retain];
+  }
 }
 
 - (void)run {
@@ -197,6 +211,14 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
     [pool release];
   }
 
+}
+
+- (CGIArray *)arguments {
+  return arguments;
+}
+
+- (CGIDictionary *)environment {
+  return environment;
 }
 
 - (void)dealloc {

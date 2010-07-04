@@ -27,6 +27,7 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
 @interface CGIApplication : CGIObject {
   CGIArray *arguments;
   CGIDictionary *environment;
+  CGIDictionary *applicationInfo;
 
   id <CGIApplicationDelegate> delegate;
 }
@@ -37,6 +38,12 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
 
 - (id <CGIApplicationDelegate>)delegate;
 - (void)setDelegate:(id <CGIApplicationDelegate>)anObject;
+
+- (CGIArray *)arguments;
+- (CGIDictionary *)environment;
+
+- (CGIDictionary *)applicationInfo;
+- (void)setApplicationInfo:(CGIDictionary *)infoPlist;
 
 - (void)run;
 
