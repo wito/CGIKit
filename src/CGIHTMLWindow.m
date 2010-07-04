@@ -27,7 +27,7 @@
 }
 
 - (CGIString *)renderInContext:(id)ctx {
-  return [CGIString stringWithFormat:@"<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>%@</title></head>%@</html>", title, [contentView renderInContext:ctx]];
+  return [CGIString stringWithFormat:@"<?xml-stylesheet href=\"/static/style.css\" type=\"text/css\"?><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>%@</title></head>%@</html>", title, [contentView renderInContext:ctx]];
 }
 
 - (CGIView *)contentView {
