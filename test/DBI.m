@@ -9,7 +9,7 @@
 
 @implementation CGIKitTestDBIQueryDelegate
 
-- (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row columns:(CGIArray *)colnames{
+- (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row columns:(CGIArray *)colnames {
   printf("%@\n", row);
   printf("%@\n", colnames);
 }
@@ -41,6 +41,12 @@ int CGIKitTest_DBI () {
   
   [dbi doQuery:query modalDelegate:[[CGIKitTestDBIQueryDelegate new] autorelease]];
   [dbi search:nil table:@"test_table" properties:props modalDelegate:[[CGIKitTestDBIQueryDelegate new] autorelease]];
+  
+  [dbi deleteFromTable:@"test_table" where:[[[CGIDictionary alloc] initWithObjectsAndKeys:@"BAZ", @"text", nil] autorelease]];
+  
+  [dbi insert:[CGIArray arrayWithObject:@"text"] values:[CGIArray arrayWithObject:@"BAZ"] table:@"test_table"];
+  [dbi updateTable:@"test_table" set:[[[CGIDictionary alloc] initWithObjectsAndKeys:@"QUX", @"text", nil] autorelease] where:[[[CGIDictionary alloc] initWithObjectsAndKeys:@"BAZ", @"text", nil] autorelease]];
+  [dbi updateTable:@"test_table" set:[[[CGIDictionary alloc] initWithObjectsAndKeys:@"BAZ", @"text", nil] autorelease] where:nil];
   
   [dbi close];
   
