@@ -76,6 +76,8 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
     [colnames addObject:[CGIString stringWithFormat:@"%@.%@", tableName, columnName]];
   }
   
+  printf("\"%s\" : %@\n", zSql, data);
+  
   i = 0;
   while (sqlite3_step(statement) == SQLITE_ROW) {
     CGIMutableArray *row = [[[CGIMutableArray alloc] init] autorelease];
@@ -102,6 +104,10 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
     }
     
     [delegate DBI:self didGetRow:row columns:colnames];
+  }
+  
+  if (!i) {
+    i = sqlite3_changes(handle);
   }
   
   sqlite3_finalize(statement);
@@ -182,8 +188,117 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
   return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:data, CGIDBIQueryDataKey, zSQL, CGIDBIQueryStringKey, nil] autorelease] modalDelegate:delegate];
 }
 
+- (CGIUInteger)insert:(CGIArray *)columns values:(CGIArray *)values table:(CGIString *)table {
+  return [self insert:columns values:values table:table onConflict:CGIDBINoAction];
+}
+
+- (CGIUInteger)insert:(CGIArray *)columns values:(CGIArray *)values table:(CGIString *)table onConflict:(CGIDBIOnConflictClause)action {
+  CGIString *actionStr = @""; /// FIXME: Get some actions in here.
+  CGIString *cols, *vals;
+  if (columns) {
+    cols = [CGIString stringWithFormat:@"(%@) ", [columns stringByJoiningComponentsWithString:@", "]];
+  } else {
+    cols = @"";
+  }
+  
+  if (values) {
+    CGIMutableString *valsBuild = [CGIMutableString stringWithFormat:@"( "];
+    
+    int i;
+    for (i = 0; i < [values count]; i++) {
+      [valsBuild appendString:@"?"];
+      if (i + 1 < [values count]) {
+        [valsBuild appendString:@", "];
+      }
+    }
+    
+    [valsBuild appendString:@" )"];
+    
+    vals = valsBuild;
+  } else {
+    vals = @"";
+  }
+  
+  CGIMutableString *zSQL = [CGIMutableString stringWithFormat:@"INSERT %@INTO \"%@\" %@VALUES %@", actionStr, table, cols, vals];
+  
+  return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:values, CGIDBIQueryDataKey, zSQL, CGIDBIQueryStringKey, nil] autorelease] modalDelegate:nil];
+}
+
+- (CGIUInteger)insert:(CGIArray *)columns table:(CGIString *)table fromQuery:(CGIDictionary *)query {
+  @throw @"CGIKitNotImplementedException";
+  return 0;
+}
+
+- (CGIUInteger)deleteFromTable:(CGIString *)table where:(CGIDictionary *)query {
+  CGIMutableString *zSQL;
+  
+  if (!query) {
+     zSQL = [CGIMutableString stringWithFormat:@"DELETE FROM \"%@\"", table];
+  } else {
+    CGIArray *qcols = [query allKeys];
+    CGIArray *data = [query allValues];
+
+    CGIMutableArray *predicates = [CGIMutableArray array];
+    CGIUInteger i;
+    for (i = 0; i < [qcols count]; i++) {
+      [predicates addObject:[CGIString stringWithFormat:@"\"%@\" = ?", [qcols objectAtIndex:i]]];
+    }
+
+    zSQL = [CGIMutableString stringWithFormat:@"DELETE FROM \"%@\" WHERE %@", table, [predicates stringByJoiningComponentsWithString:@" AND "]];
+  }
+  
+  return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:[query allValues], CGIDBIQueryDataKey, zSQL, CGIDBIQueryStringKey, nil] autorelease] modalDelegate:nil];
+}
+
+
 - (CGIUInteger)search:(CGIDictionary *)query table:(CGIString *)table modalDelegate:(id<CGIDBIQueryDelegate>)delegate {
   return [self search:query table:table properties:nil modalDelegate:delegate];
+}
+
+- (CGIUInteger)updateTable:(CGIString *)table set:(CGIDictionary *)updates where:(CGIDictionary *)query {
+  return [self updateTable:table set:updates where:query onConflict:CGIDBINoAction];
+}
+
+- (CGIUInteger)updateTable:(CGIString *)table set:(CGIDictionary *)updates where:(CGIDictionary *)query onConflict:(CGIDBIOnConflictClause)action {
+  CGIString *actionStr = @"";
+  CGIString *zSQL, *qString, *uString;
+
+
+  CGIMutableArray *qData = [CGIMutableArray array];
+
+  {
+    CGIArray *qcols = [updates allKeys];
+    CGIArray *data = [updates allValues];
+
+    CGIMutableArray *predicates = [CGIMutableArray array];
+    CGIUInteger i;
+    for (i = 0; i < [qcols count]; i++) {
+      [predicates addObject:[CGIString stringWithFormat:@"\"%@\" = ?", [qcols objectAtIndex:i]]];
+      [qData addObject:[data objectAtIndex:i]];
+    }
+
+    uString = [predicates stringByJoiningComponentsWithString:@", "];
+  }
+  
+  if (query) {
+    CGIArray *qcols = [query allKeys];
+    CGIArray *data = [query allValues];
+
+    CGIMutableArray *predicates = [CGIMutableArray array];
+    CGIUInteger i;
+    for (i = 0; i < [qcols count]; i++) {
+      [predicates addObject:[CGIString stringWithFormat:@"\"%@\" = ?", [qcols objectAtIndex:i]]];
+      [qData addObject:[data objectAtIndex:i]];
+    }
+
+    qString = [predicates stringByJoiningComponentsWithString:@" AND "];
+  } else {
+    qString = @"1";
+  }
+  
+  zSQL = [CGIMutableString stringWithFormat:@"UPDATE \"%@\" SET %@ WHERE %@", table, uString, qString];
+
+  return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:qData, CGIDBIQueryDataKey, zSQL, CGIDBIQueryStringKey, nil] autorelease] modalDelegate:nil];
 }
 
 - (void)dealloc {
