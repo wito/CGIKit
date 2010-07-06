@@ -87,7 +87,9 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
       
       CGIUInteger type = sqlite3_column_type(statement, j);
       
-      if (type == SQLITE_BLOB) {
+      if (type == SQLITE_NULL) {
+        [row addObject:[CGINumber numberWithInteger:0]];
+      } else if (type == SQLITE_BLOB) {
         CGIUInteger blobsize = sqlite3_column_bytes(statement, j);
         const unsigned char *blob = sqlite3_column_blob(statement, j);
         CGIData *blobData = [[[CGIData alloc] initWithBytes:blob length:blobsize] autorelease];
@@ -170,6 +172,8 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
     }
     
     [zSQL appendFormat:@" WHERE %@", [predicates stringByJoiningComponentsWithString:@" AND "]];
+  } else {
+    data = [CGIArray array];
   }
   
   CGIString *order_by = [properties objectForKey:@"ORDER_BY"];
