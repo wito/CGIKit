@@ -10,6 +10,7 @@ int main () {
     CGIKitTest_String();
     CGIKitTest_Archiver();
     CGIKitTest_DBI();
+    CGIKitTest_Result();
   }
   @catch (id e) {
     fprintf(stderr, "Terminating due to uncaught exception: %@\n", e);

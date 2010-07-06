@@ -21,3 +21,4 @@
 #import "CGIDBI.h"
 #import "CGIDBIQueryDelegate.h"
 #import "CGINumber.h"
+#import "CGIResult.h"

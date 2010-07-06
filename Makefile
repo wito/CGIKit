@@ -14,7 +14,7 @@ VERSION = 0.0.1
 
 .PHONY: clean doc install
 
-_TEST = harness.o String.o Array.o Archiver.o DBI.o
+_TEST = harness.o String.o Array.o Archiver.o DBI.o Result.o
 TEST = $(patsubst %,$(TODIR)/%,$(_TEST))
 
 _OBJ = CGIFunctions.o CGIAutoreleasePool.o CGIObject.o \
@@ -22,7 +22,7 @@ _OBJ = CGIFunctions.o CGIAutoreleasePool.o CGIObject.o \
        CGIParameters.o CGIApplication.o CGIRequest.o \
        CGIXMLParser.o CGICoder.o CGIData.o \
        CGIHTMLWindow.o CGIView.o CGIDBI.o \
-       CGISQLiteDBI.o CGINumber.o
+       CGISQLiteDBI.o CGINumber.o CGIResult.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
