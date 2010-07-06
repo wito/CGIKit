@@ -26,6 +26,7 @@
 - (BOOL)isEqualToString:(CGIString *)other;
 
 - (CGIString *)lowercaseString;
+- (CGIString *)capitalizedString;
 
 @end
 
@@ -63,6 +64,7 @@
 
 - (CGIArray *)componentsSeparatedByString:(CGIString *)separator;
 - (CGIString *)substringFromIndex:(CGIUInteger)index;
+- (CGIString *)substringWithRange:(CGIRange)range;
 
 - (BOOL)hasSuffix:(CGIString *)suff;
 

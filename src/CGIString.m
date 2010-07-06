@@ -24,6 +24,15 @@
 
 @implementation CGIString
 
+- (unsigned)hash {
+  unsigned int hash = 5381;
+  int c;
+  const char *str = [self UTF8String];
+  while (c = *str++)
+    hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+  return hash;
+}
+
 - (CGIString *)lowercaseString {
   const unichar *myValue = [self UTF8String];
   CGIUInteger myLen = [self lengthOfBytes];
@@ -34,6 +43,26 @@
   unichar *iter = newValue;
   while (*iter) {
     if (isascii(*iter) && isupper(*iter)) {
+      *iter = tolower(*iter);
+    }
+    ++iter;
+  }
+  
+  return [CGIString stringWithUTF8String:newValue];
+}
+
+- (CGIString *)capitalizedString {
+  const unichar *myValue = [self UTF8String];
+  CGIUInteger myLen = [self lengthOfBytes];
+  unichar *newValue = malloc(myLen + 1);
+  memcpy(newValue, myValue, myLen);
+  newValue[myLen] = 0;
+  
+  unichar *iter = newValue;
+  while (*iter) {
+    if (iter == newValue && isascii(*iter) && islower(*iter)) {
+      *iter = toupper(*iter);
+    } else if (isascii(*iter) && isupper(*iter)) {
       *iter = tolower(*iter);
     }
     ++iter;
@@ -316,6 +345,13 @@
   return [CGIString stringWithUTF8String:[self UTF8String] + index];
 }
 
+- (CGIString *)substringWithRange:(CGIRange)range {
+  unichar *buf = objc_malloc(range.length + 1);
+  buf[range.length] = 0;
+  memcpy(buf, [self UTF8String] + range.location, range.length);
+  return [CGIString stringWithUTF8String:buf];
+}
+
 - (BOOL)hasSuffix:(CGIString *)suffix {
   const CGIUInteger _length = [self lengthOfBytes];
   const CGIUInteger _sufflen = [suffix lengthOfBytes];
@@ -350,15 +386,6 @@
 @end
 
 @implementation CGISimpleCString
-
-- (unsigned)hash {
-  unsigned int hash = 5381;
-  int c;
-  char *str = _bytes;
-  while (c = *str++)
-    hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-  return hash;
-}
 
 - (unichar)characterAtIndex:(CGIUInteger)idx {
   if (idx < _length)
@@ -547,6 +574,13 @@ static CGIMutablePlaceholderString *sharedMutablePlaceholder;
 
 - (CGIUInteger)lengthOfBytes {
   return strlen(_bytes);
+}
+
+- (unichar)characterAtIndex:(CGIUInteger)idx {
+  if (idx < _length)
+    return _bytes[idx];
+  else
+    @throw @"CGIOutOfBoundsException";
 }
 
 + (id)stringWithString:(CGIString *)string {
