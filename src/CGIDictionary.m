@@ -513,7 +513,14 @@ static CGIPlaceholderMutableDictionary *sharedMutablePlaceHolder;
 }
 
 // 
-// - (void)addEntriesFromDictionary:(CGIDictionary*)aDictionary;
+- (void)addEntriesFromDictionary:(CGIDictionary*)aDictionary {
+  CGIArray *keys = [aDictionary allKeys];
+  
+  int i;
+  for (i = 0; i < [keys count]; i++) {
+    [self setObject:[aDictionary objectForKey:[keys objectAtIndex:i]] forKey:[keys objectAtIndex:i]];
+  }
+}
 // - (void)setDictionary;
 
 
