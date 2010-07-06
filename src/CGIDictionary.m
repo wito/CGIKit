@@ -7,6 +7,7 @@
 #import <objc/objc-api.h>
 #import "CGIKit/CGIFunctions.h"
 #include <assert.h>
+#import "CGIKit/CGIAutoreleasePool.h"
 
 typedef struct _CGIDictBucket CGIDictBucket;
 
@@ -85,6 +86,10 @@ CGIDictBucket **CGIDictionaryGrowBacking(CGIDictBucket **backing, CGIUInteger ol
 
 + (id)dictionary {
   return [[[self alloc] init] autorelease];
+}
+
++ (id)dictionaryWithObjects:(CGIArray *)objects forKeys:(CGIArray *)keys {
+  return [[[self alloc] initWithObjects:objects forKeys:keys] autorelease];
 }
 
 - (id)init {
@@ -195,6 +200,23 @@ CGIDictBucket **CGIDictionaryGrowBacking(CGIDictBucket **backing, CGIUInteger ol
   return self;
 }
 
+- (id)initWithObjects:(CGIArray *)objects forKeys:(CGIArray *)keys {
+  
+  id *obuf = objc_malloc([objects count] * sizeof(id *));
+  id *kbuf = objc_malloc([objects count] * sizeof(id *));
+  int count;
+  
+  for (count = 0; count < [objects count]; count++) {
+    obuf[count] = [objects objectAtIndex:count];
+    kbuf[count] = [keys objectAtIndex:count];
+  }
+  
+  [CGIAutoreleasePool addMemoryBlockToPool:obuf];
+  [CGIAutoreleasePool addMemoryBlockToPool:kbuf];
+  
+  return [self initWithObjects:obuf forKeys:kbuf count:count];
+}
+
 - (id)initWithObject:(id)anObject forKey:(id)aKey {
   return [self initWithObjects:&anObject forKeys:&aKey count:1];
 }
@@ -300,6 +322,10 @@ static CGIPlaceholderDictionary *sharedPlaceHolder;
 
 - (id)initWithObjects:(id*)objects forKeys:(id*)keys count:(CGIUInteger)count {
   return [[[self concreteClass] alloc] initWithObjects:objects forKeys:keys count:count];
+}
+
+- (id)initWithObjects:(CGIArray *)os forKeys:(CGIArray *)ks {
+  return [[[self concreteClass] alloc] initWithObjects:os forKeys:ks];
 }
 
 - (id)initWithObject:(id)anObject forKey:(id)aKey {
