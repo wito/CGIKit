@@ -16,7 +16,25 @@ typedef  Payload;
 
 @end
 
+@interface CGINull : CGIIntegralNumber {}
+
+- (BOOL)isNull; ///< @return YES
+
+@end
+
 @implementation CGINumber
+
++ (CGINumber *)null {
+  static CGINumber *sharedNull = nil;
+  if (!sharedNull) {
+    sharedNull = [CGINull new];
+  }
+  return sharedNull;
+}
+
+- (BOOL)isNull {
+  return NO;
+}
 
 - (id)initWithInteger:(CGIInteger)value {
   [self release];
@@ -82,6 +100,23 @@ typedef  Payload;
 - (void)encodeWithCoder:(CGICoder *)coder {
   [super encodeWithCoder:coder];
   [coder encodeInteger:payload.d];
+}
+
+@end
+
+@implementation CGINull
+
+- (id)init {
+  self = [super initWithInteger:0];
+  return self;
+}
+
+- (CGIString *)plistRepresentation {
+  return @"NULL";
+}
+
+- (BOOL)isNull {
+  return YES;
 }
 
 @end

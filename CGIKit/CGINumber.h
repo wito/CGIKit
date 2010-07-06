@@ -12,4 +12,7 @@
 - (id)initWithInteger:(CGIInteger)value;
 - (CGIInteger)integerValue;
 
++ (CGINumber *)null;
+- (BOOL)isNull;
+
 @end
