@@ -59,7 +59,11 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
     } else if ([parameter isKindOfClass:[CGIData self]]) {
       sqlite3_bind_blob(statement, i, [parameter bytes], [parameter length], SQLITE_STATIC);
     } else if ([parameter isKindOfClass:[CGINumber self]]) {
-      sqlite3_bind_int64(statement, i, [parameter integerValue]);
+      if ([parameter isNull]) {
+        sqlite3_bind_null(statement, i);
+      } else {
+        sqlite3_bind_int64(statement, i, [parameter integerValue]);
+      }
     }
   }
   
@@ -225,7 +229,9 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
   
   CGIMutableString *zSQL = [CGIMutableString stringWithFormat:@"INSERT %@INTO \"%@\" %@VALUES %@", actionStr, table, cols, vals];
   
-  return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:values, CGIDBIQueryDataKey, zSQL, CGIDBIQueryStringKey, nil] autorelease] modalDelegate:nil];
+  [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:values, CGIDBIQueryDataKey, zSQL, CGIDBIQueryStringKey, nil] autorelease] modalDelegate:nil];
+  
+  return sqlite3_last_insert_rowid(handle);
 }
 
 - (CGIUInteger)insert:(CGIArray *)columns table:(CGIString *)table fromQuery:(CGIDictionary *)query {
