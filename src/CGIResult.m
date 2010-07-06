@@ -42,15 +42,15 @@ void setResultIvar(id self, SEL _cmd, id newVal) {
   IvarList *ivars = [self class]->ivars;
   CGIString *iName = [CGIString stringWithUTF8String:sel_get_name(_cmd)];
   CGIString *name = [[iName substringWithRange:CGIMakeRange(3, [iName length] - 4)] lowercaseString];
-  
+
   int i;
-  for (i = 0; i < ivars->ivar_count; i++) {        
+  for (i = 0; i < ivars->ivar_count; i++) {
     if (!strcmp(ivars->ivar_list[i].ivar_name, [name UTF8String])) {
       id *retval = ((id *)&(((char *)self)[ivars->ivar_list[i].ivar_offset]));
       [*retval release];
       *retval = [newVal retain];
       ((struct CGIResult *)(self))->_status = CGIInMemory;
-      
+      return;
     }
   }
   
@@ -238,31 +238,67 @@ id getResultSetIvar(id self, SEL _cmd) {
 - (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row columns:(CGIArray *)columns {
   CGIDictionary *data = [CGIDictionary dictionaryWithObjects:row forKeys:columns];
 
-  IvarList *ivars = [self class]->ivars;
-  
-  CGIMutableArray *colnames = [CGIMutableArray array];
+    IvarList *ivars = [self class]->ivars;
+    CGIMutableArray *colnames = [CGIMutableArray array];
     
-  int i;
-  for (i = 0; i < ivars->ivar_count; i++) {
-    //printf("%s: %s/%u\n", ivars->ivar_list[i].ivar_name, ivars->ivar_list[i].ivar_type, ivars->ivar_list[i].ivar_offset);
-    CGIString *tableName = [CGIString stringWithFormat:@"%@.%s", _table, ivars->ivar_list[i].ivar_name];
+    int i;
+    for (i = 0; i < ivars->ivar_count; i++) {
+      //printf("%s: %s/%u\n", ivars->ivar_list[i].ivar_name, ivars->ivar_list[i].ivar_type, ivars->ivar_list[i].ivar_offset);
+      CGIString *iName = [CGIString stringWithUTF8String:ivars->ivar_list[i].ivar_name];
+      CGIString *tableName = [CGIString stringWithFormat:@"%@.%@", _table, iName];
       
-    [colnames addObject:[CGIString stringWithUTF8String:ivars->ivar_list[i].ivar_name]];
+      [colnames addObject:iName];
       
-    if (ivars->ivar_list[i].ivar_type[0] == 'q') {      
-      *((CGIInteger*)&(((char *)self)[ivars->ivar_list[i].ivar_offset])) = [[data objectForKey:tableName] integerValue];
-    } else if (ivars->ivar_list[i].ivar_type[0] == '@') {
-      CGIString *typeString = [CGIString stringWithUTF8String:ivars->ivar_list[i].ivar_type];
-      CGIString *className = [typeString substringWithRange:CGIMakeRange(2, [typeString length] - 3)];
-      Class ivarClass = objc_get_class([className UTF8String]);
+      if (ivars->ivar_list[i].ivar_type[0] == 'q') { // This should only be the PRIMARY KEY
+        *((CGIInteger*)&(((char *)self)[ivars->ivar_list[i].ivar_offset])) = [[data objectForKey:tableName] integerValue];
         
-      if ([ivarClass isKindOfClass:[CGIResult self]]) {
-        *((id *)&(((char *)self)[ivars->ivar_list[i].ivar_offset])) = [[ivarClass alloc] initWithDatabase:_database query:[CGIDictionary dictionaryWithObject:[data objectForKey:tableName] forKey:@"id"]];
-      } else {
-        *((id *)&(((char *)self)[ivars->ivar_list[i].ivar_offset])) = [data objectForKey:tableName];
+        SEL idSelector = sel_get_typed_uid("id", "q16@0:8");
+        
+        if (!idSelector || ![self respondsToSelector:idSelector]) {
+          [self installMethodForIDColumn];
+        }
+
+      } else if (ivars->ivar_list[i].ivar_type[0] == '@') {
+        CGIString *typeString = [CGIString stringWithUTF8String:ivars->ivar_list[i].ivar_type];
+        CGIString *className = [typeString substringWithRange:CGIMakeRange(2, [typeString length] - 3)];
+        Class ivarClass = objc_get_class([className UTF8String]);
+        
+        if ([ivarClass isKindOfClass:[CGIResult self]]) { // Referring out
+          
+          if ([[data objectForKey:tableName] integerValue]) {
+            *((id *)&(((char *)self)[ivars->ivar_list[i].ivar_offset])) = [[ivarClass alloc] initWithDatabase:_database query:[CGIDictionary dictionaryWithObject:[data objectForKey:tableName] forKey:@"id"]];
+          } else {
+            *((id *)&(((char *)self)[ivars->ivar_list[i].ivar_offset])) = nil;
+          }
+          
+          SEL selector = sel_get_typed_uid([iName UTF8String], "@16@0:8");
+          
+          if (!selector || ![self respondsToSelector:selector]) {
+            [self installMethodsForColumn:iName];
+          }
+          
+        } else if ([ivarClass isKindOfClass:[CGIResultSet self]]) { // Here we are referring in
+          
+          *((id *)&(((char *)self)[ivars->ivar_list[i].ivar_offset])) = [[ivarClass alloc] initWithDatabase:_database query:[CGIDictionary dictionaryWithObject:[data objectForKey:[CGIString stringWithFormat:@"%@.id", _table]] forKey:_table]];
+          
+          SEL selector = sel_get_typed_uid([iName UTF8String], "@16@0:8");
+          
+          if (!selector || ![self respondsToSelector:selector]) {
+            [self installMethodsForRSColumn:iName];
+          }
+          
+        } else { // Data
+          *((id *)&(((char *)self)[ivars->ivar_list[i].ivar_offset])) = [data objectForKey:tableName];
+          
+          SEL selector = sel_get_typed_uid([iName UTF8String], "@16@0:8");
+          
+          if (!selector || ![self respondsToSelector:selector]) {
+            [self installMethodsForColumn:iName];
+          }
+
+        }
       }
     }
-  }
   
   if (!_columns)
     _columns = [colnames retain];
