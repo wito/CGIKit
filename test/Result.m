@@ -85,11 +85,23 @@ int CGIKitTest_Result () {
   Authors *authors = [[Authors alloc] initWithDatabase:dbi query:nil];
   
   Author *zun_tsu = [[authors all] objectAtIndex:0];
+  Book *art_of_war = [[[zun_tsu books] all] objectAtIndex:0];
 
-  CGILog(@"%@", [[[books all] objectAtIndex:0] author]);
+  CGILog(@"%@", art_of_war);
   
-  CGILog(@"%@", [[zun_tsu books] all]);
+  [art_of_war setTitle:@"The Art of War"];
   
+  CGILog(@"%@", art_of_war);
+  
+  [art_of_war update];
+  
+  [art_of_war setAuthor:nil];
+  
+  [art_of_war update];
+  
+  [art_of_war setAuthor:zun_tsu];
+
+  [art_of_war update];
   
   [dbi close];
   

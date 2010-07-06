@@ -33,6 +33,7 @@ typedef enum {
 - (id)columnValue:(CGIString *)col;
 - (void)setValue:(id)value forColumn:(CGIString *)col;
 
+- (id)update;
 - (id)update:(CGIDictionary *)data;
 - (id)synchronize;
 
@@ -55,5 +56,7 @@ typedef enum {
 
 - (Class)resultClass;
 - (CGIString *)table;
+
+- (CGIResult *)create:(CGIDictionary *)data;
 
 @end

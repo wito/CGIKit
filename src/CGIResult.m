@@ -232,7 +232,41 @@ id getResultSetIvar(id self, SEL _cmd) {
 }
 
 - (id)synchronize {
-  [_database search:_query table:_table modalDelegate:self];
+  if (_status) {
+    [_database search:_query table:_table modalDelegate:self];
+  }
+  return self;
+}
+
+- (id)update {
+  return [self update:nil];
+}
+
+- (id)update:(CGIDictionary *)data {
+  if (data == nil) {
+    CGILog(@"%@", _columns);
+    
+    CGIMutableDictionary *updateDict = [CGIMutableDictionary dictionary];
+    
+    int i;
+    for (i = 1; i < [_columns count]; i++) {
+      CGIString *key = [_columns objectAtIndex:i];
+      CGIString *object = [self performSelector:sel_get_uid([key UTF8String])];
+      
+      if (!object) {
+        object = [CGINumber null];
+      } else if ([[object class] isKindOfClass:[CGIResult self]]) {
+        object = [CGINumber numberWithInteger:(CGIInteger)[object id]];
+      }
+    
+      [updateDict setObject:object forKey:key];
+    }
+    
+    CGIDictionary *queryDict = [CGIDictionary dictionaryWithObject:[CGINumber numberWithInteger:(CGIInteger)[self id]] forKey:@"id"];
+    
+    [_database updateTable:[self table] set:updateDict where:queryDict];
+    _status = CGISynchronized;
+  }
 }
 
 - (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row columns:(CGIArray *)columns {
@@ -348,6 +382,25 @@ id getResultSetIvar(id self, SEL _cmd) {
 
 - (CGIString *)table {
   return [[self resultClass] table];
+}
+
+- (CGIResult *)create:(CGIDictionary *)data {
+  CGIMutableDictionary *qDict = [CGIMutableDictionary dictionary];
+  
+  if (_query) {
+    [qDict addEntriesFromDictionary:_query];
+  }
+
+  if (data) {
+    [qDict addEntriesFromDictionary:data];
+  }
+  
+  CGIUInteger rowid = [_database insert:[qDict allKeys] values:[qDict allValues] table:[self table]];
+  
+  id retval = [[[self resultClass] alloc] initWithDatabase:_database query:[CGIDictionary dictionaryWithObject:[CGINumber numberWithInteger:rowid] forKey:@"id"]];
+  [retval synchronize];
+  
+  return retval;
 }
 
 @end
