@@ -84,24 +84,18 @@ int CGIKitTest_Result () {
   Books *books = [[Books alloc] initWithDatabase:dbi query:nil];
   Authors *authors = [[Authors alloc] initWithDatabase:dbi query:nil];
   
-  Author *zun_tsu = [[authors all] objectAtIndex:0];
-  Book *art_of_war = [[[zun_tsu books] all] objectAtIndex:0];
-
-  CGILog(@"%@", art_of_war);
+  Author *zun_tsu = [authors create:[CGIDictionary dictionaryWithObject:@"Zun Tsu" forKey:@"name"]];
   
-  [art_of_war setTitle:@"The Art of War"];
+  CGIMutableDictionary *bDict = [CGIMutableDictionary dictionary];
   
-  CGILog(@"%@", art_of_war);
+  [bDict setObject:@"The Art of War" forKey:@"title"];
+  [bDict setObject:zun_tsu forKey:@"author"];
   
-  [art_of_war update];
+  Book *art_of_war = [books create:bDict];
   
-  [art_of_war setAuthor:nil];
+  [books delete];
+  [authors delete];
   
-  [art_of_war update];
-  
-  [art_of_war setAuthor:zun_tsu];
-
-  [art_of_war update];
   
   [dbi close];
   

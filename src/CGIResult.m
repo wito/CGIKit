@@ -339,6 +339,10 @@ id getResultSetIvar(id self, SEL _cmd) {
   _status = 0;
 }
 
+- (void)delete {
+  [_database deleteFromTable:[self table] where:[CGIDictionary dictionaryWithObject:[CGINumber numberWithInteger:(CGIInteger)[self id]] forKey:@"id"]];
+}
+
 @end
 
 @implementation CGIResultSet
@@ -395,12 +399,27 @@ id getResultSetIvar(id self, SEL _cmd) {
     [qDict addEntriesFromDictionary:data];
   }
   
+  CGIArray *keys = [qDict allKeys];
+  
+  int i;
+  for (i = 0; i < [keys count]; i++) {
+    id anObject = [qDict objectForKey:[keys objectAtIndex:i]];
+    
+    if ([anObject isKindOfClass:[CGIResult self]]) {
+      [qDict setObject:[CGINumber numberWithInteger:(CGIInteger)[anObject id]] forKey:[keys objectAtIndex:i]];
+    }
+  }
+  
   CGIUInteger rowid = [_database insert:[qDict allKeys] values:[qDict allValues] table:[self table]];
   
   id retval = [[[self resultClass] alloc] initWithDatabase:_database query:[CGIDictionary dictionaryWithObject:[CGINumber numberWithInteger:rowid] forKey:@"id"]];
   [retval synchronize];
   
   return retval;
+}
+
+- (void)delete {
+  [_database deleteFromTable:[self table] where:_query];
 }
 
 @end

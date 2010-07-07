@@ -37,6 +37,8 @@ typedef enum {
 - (id)update:(CGIDictionary *)data;
 - (id)synchronize;
 
+- (void)delete;
+
 @end
 
 @interface CGIResultSet : CGIObject <CGIDBIQueryDelegate> {
@@ -58,5 +60,7 @@ typedef enum {
 - (CGIString *)table;
 
 - (CGIResult *)create:(CGIDictionary *)data;
+
+- (void)delete;
 
 @end

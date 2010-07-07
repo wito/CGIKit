@@ -257,7 +257,14 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
     zSQL = [CGIMutableString stringWithFormat:@"DELETE FROM \"%@\" WHERE %@", table, [predicates stringByJoiningComponentsWithString:@" AND "]];
   }
   
-  return [self doQuery:[[[CGIDictionary alloc] initWithObjectsAndKeys:[query allValues], CGIDBIQueryDataKey, zSQL, CGIDBIQueryStringKey, nil] autorelease] modalDelegate:nil];
+  CGIMutableDictionary *qDict = [CGIMutableDictionary dictionary];
+  
+  [qDict setObject:zSQL forKey:CGIDBIQueryStringKey];
+  if (query) {
+    [qDict setObject:[query allValues] forKey:CGIDBIQueryDataKey];
+  }
+  
+  return [self doQuery:qDict modalDelegate:nil];
 }
 
 
