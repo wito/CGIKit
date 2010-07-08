@@ -49,6 +49,9 @@
 - (CGIString *)content;
 - (void)setContent:(CGIString *)content;
 
+- (CGIString *)renderWithContent:(CGIString *)content;
+- (CGIString *)renderWithContent:(CGIString *)content inContext:(id)context;
+
 @end
 
 @interface CGIListView : CGIView <CGITextViewDataSource> {
@@ -60,3 +63,20 @@
 
 @end
 
+@interface CGITableRowView : CGIView {
+
+}
+
+- (CGIString *)renderWithRepresentedObject:(id)object;
+- (CGIString *)renderWithRepresentedObject:(id)object inContext:(id)context;
+
+@end
+
+@interface CGITableView : CGIView {
+  CGITableRowView *contentCell;
+}
+
+- (CGITableRowView *)contentCell;
+- (void)setContentCell:(CGITableRowView *)contentCell;
+
+@end

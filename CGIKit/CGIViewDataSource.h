@@ -3,6 +3,7 @@
 @class CGIView;
 @class CGITextView;
 @class CGIListView;
+@class CGITableView;
 @class CGIString;
 @class CGIArray;
 
@@ -24,5 +25,12 @@
 
 - (CGIUInteger)numberOfRowsInListView:(CGIListView *)listView context:(id)context;
 - (CGIString *)listView:(CGIListView *)listView contentForRow:(CGIUInteger)index context:(id)context;
+
+@end
+
+@protocol CGITableViewDataSource <CGIViewDataSource>
+
+- (CGIUInteger)numberOfRowsInTableView:(CGITableView *)tableView context:(id)context;
+- (id)tableView:(CGITableView *)tableView representedObjectForRow:(CGIUInteger)index context:(id)context;
 
 @end

@@ -122,6 +122,14 @@
 }
 
 - (CGIString *)renderInContext:(id)ctx {
+  return [self renderWithContent:nil inContext:ctx];
+}
+
+- (CGIString *)renderWithContent:(CGIString *)cval {
+  return [self renderWithContent:cval inContext:nil];
+}
+
+- (CGIString *)renderWithContent:(CGIString *)cval inContext:(id)ctx {
   CGIMutableString *retval = [CGIMutableString string];
   
   [retval appendFormat:@"<%@", elementName];
@@ -133,7 +141,9 @@
   [retval appendString:@">"];
   
   if (content) {
-    [retval appendString:content];
+    [retval appendString:[content description]];
+  } else if (cval) {
+    [retval appendString:[cval description]];
   } else {
     if (dataSource) {
       [retval appendString:[dataSource contentForView:self inContext:ctx]];
@@ -230,3 +240,69 @@
 
 @end
 
+@implementation CGITableView
+
+- (id)init {
+  return [self initWithElementName:@"table"];
+}
+
+- (id)initWithElementName:(CGIString *)htmlElement {
+  self = [super initWithElementName:htmlElement];
+  if (self != nil) {
+    contentCell = [[CGITableRowView alloc] initWithElementName:@"tr"];
+  }
+  return self;
+}
+
+- (CGITableRowView *)contentCell {
+  return contentCell;
+}
+
+- (void)setContentCell:(CGITableRowView *)newCS {
+  [contentCell release];
+  contentCell = [newCS retain];
+}
+
+- (CGIString *)renderInContext:(id)ctx {
+  CGIMutableString *retval = [CGIMutableString string];
+  
+  [retval appendFormat:@"<%@", elementName];
+
+  if (elementID) {
+    [retval appendFormat:@" id=\"%@\"", elementID];
+  }
+  
+  [retval appendString:@">"];
+  
+  CGIUInteger c = [dataSource numberOfRowsInTableView:self context:ctx];
+  CGIUInteger i;
+  
+  void *context[2] = {ctx,&i};
+  
+  for (i = 0; i < c; i++) {
+    [retval appendString:[contentCell renderWithRepresentedObject:[dataSource tableView:self representedObjectForRow:i context:ctx]]];
+  }
+  
+  [retval appendFormat:@"</%@>", elementName];
+  
+  return retval;
+}
+
+- (void)dealloc {
+  [contentCell release];
+  [super dealloc];
+}
+
+@end
+
+@implementation CGITableRowView
+
+- (CGIString *)renderWithRepresentedObject:(id)object {
+  return [self renderWithRepresentedObject:object inContext:nil];
+}
+
+- (CGIString *)renderWithRepresentedObject:(id)object inContext:(id)context {
+  return [CGIString stringWithFormat:@"<%@>%%@</%@>", elementName, elementName];
+}
+
+@end
