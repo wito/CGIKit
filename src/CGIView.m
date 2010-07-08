@@ -167,6 +167,16 @@
   return self;
 }
 
+- (CGITextView *)contentCell {
+  return contentCell;
+}
+
+- (void)setContentCell:(CGITextView *)newCS {
+  [contentCell release];
+  contentCell = [newCS retain];
+  [contentCell setDataSource:self];
+}
+
 - (CGIArray *)classesForView:(CGIView *)cell inContext:(id)ctx {
   return nil;
 }

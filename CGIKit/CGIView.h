@@ -55,5 +55,8 @@
   CGITextView *contentCell;
 }
 
+- (CGITextView *)contentCell;
+- (void)setContentCell:(CGITextView *)contentCell;
+
 @end
 
