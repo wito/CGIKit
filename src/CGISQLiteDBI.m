@@ -92,7 +92,7 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
       CGIUInteger type = sqlite3_column_type(statement, j);
       
       if (type == SQLITE_NULL) {
-        [row addObject:[CGINumber numberWithInteger:0]];
+        [row addObject:[CGINumber null]];
       } else if (type == SQLITE_BLOB) {
         CGIUInteger blobsize = sqlite3_column_bytes(statement, j);
         const unsigned char *blob = sqlite3_column_blob(statement, j);
