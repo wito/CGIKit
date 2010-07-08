@@ -80,7 +80,7 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
     [colnames addObject:[CGIString stringWithFormat:@"%@.%@", tableName, columnName]];
   }
   
-  printf("\"%s\" : %@\n", zSql, data);
+  CGILog(@"\"%s\" : %@\n", zSql, data);
   
   i = 0;
   while (sqlite3_step(statement) == SQLITE_ROW) {
@@ -180,12 +180,15 @@ CGIString *CGIDBIQueryDataKey = @"CGIDBIQueryDataKeyName";
     data = [CGIArray array];
   }
   
-  CGIString *order_by = [properties objectForKey:@"ORDER_BY"];
+  id order_by = [properties objectForKey:@"ORDER_BY"];
   if (order_by) {
     if ([order_by isKindOfClass:[CGIString self]]) { // default order
       [zSQL appendFormat:@" ORDER BY %@", order_by];
-    } else {
-      @throw @"CGINotImplementedException";
+    } else { // different order
+      CGIString *direction = [[order_by allKeys] objectAtIndex:0];
+      CGIString *column = [[order_by allValues] objectAtIndex:0];
+      
+      [zSQL appendFormat:@" ORDER BY %@ %@", column, direction];
     }
   }
   

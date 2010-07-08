@@ -45,6 +45,7 @@ typedef enum {
   CGIDBI *_database;
   CGIString *_table;
   CGIDictionary *_query;
+  CGIDictionary *_queryProps;
   Class _resultClass;
   
   CGIArray *_results;
@@ -62,5 +63,8 @@ typedef enum {
 - (CGIResult *)create:(CGIDictionary *)data;
 
 - (void)delete;
+
+- (id)sortBy:(CGIString *)column;
+- (id)sortBy:(CGIString *)column ascending:(BOOL)asc;
 
 @end

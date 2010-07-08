@@ -350,7 +350,7 @@ id getResultSetIvar(id self, SEL _cmd) {
 - (void)update {
   [_results release];
   _results = [CGIMutableArray new];
-  _count = [_database search:_query table:_table modalDelegate:self];
+  _count = [_database search:_query table:_table properties:_queryProps modalDelegate:self];
 }
 
 - (void)DBI:(CGIDBI *)dbi didGetRow:(CGIArray *)row columns:(CGIArray *)colnames {
@@ -364,6 +364,7 @@ id getResultSetIvar(id self, SEL _cmd) {
   if (self) {
     _database = [database retain];
     _query = [query retain];
+    _queryProps = nil;
     _table = [self table];
     _resultClass = [self resultClass];
     
@@ -416,6 +417,19 @@ id getResultSetIvar(id self, SEL _cmd) {
   [retval synchronize];
   
   return retval;
+}
+
+- (id)sortBy:(CGIString *)column {
+  return [self sortBy:column ascending:YES];
+}
+
+- (id)sortBy:(CGIString *)column ascending:(BOOL)asc {
+  if (!_queryProps)
+    _queryProps = [[CGIMutableDictionary dictionary] retain];
+  
+  [(CGIMutableDictionary *)_queryProps setObject:[CGIDictionary dictionaryWithObject:column forKey:asc?@"ASC":@"DESC"] forKey:@"ORDER_BY"];
+  
+  return self;
 }
 
 - (void)delete {
