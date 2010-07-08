@@ -119,4 +119,8 @@ typedef  Payload;
   return YES;
 }
 
+- (CGIString *)description {
+  return [self plistRepresentation];
+}
+
 @end
