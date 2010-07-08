@@ -155,7 +155,7 @@
 }
 
 - (BOOL)isEqualToString:(CGIString *)other {
-  if (![self length] == [other length]) return NO;
+  if ([self length] != [other length]) return NO;
   CGIUInteger i, len = [self length];
   for (i = 0; i < len; i++) {
     if (!([self characterAtIndex:i] == [other characterAtIndex:i])) return NO;
