@@ -70,6 +70,12 @@
 
 @end
 
+@interface CGIString (CGIStringConversion)
+
+- (CGIInteger)integerValue;
+
+@end
+
 @interface CGIMutableString : CGIString
 
 - (void)appendString:(CGIString *)aString;

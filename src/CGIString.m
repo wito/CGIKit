@@ -664,6 +664,14 @@ static CGIMutablePlaceholderString *sharedMutablePlaceholder;
 
 @end
 
+@implementation CGIString (CGIStringConversion)
+
+- (CGIInteger)integerValue {
+  return strtoll([self UTF8String], NULL, 10);
+}
+
+@end
+
 
 
 // @implementation CGIString
