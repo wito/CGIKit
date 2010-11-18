@@ -162,16 +162,17 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
       }
     }
     
-        
+    CGIString *contentType = [requestEnvironment objectForKey:@"CONTENT_TYPE"];
+    CGIString *dataString = nil;
+
     if ([method isEqualToString:@"POST"] && len != 0) {
-      CGIString *dataString = nil;
       char *data = malloc(len);
       FCGX_GetStr(data, len, req.in);
       
       dataString = [CGIString stringWithUTF8String:data length:len];
       free(data);
       
-      if ([[requestEnvironment objectForKey:@"CONTENT_TYPE"] isEqualToString:@"application/x-www-form-urlencoded"]) {
+      if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
         if (queryString && [queryString length]) {
           CGIArray *queryParts = [dataString componentsSeparatedByString:@"&"];
           int i;
@@ -184,10 +185,9 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
             }
           }
         }
-      } else if ([[requestEnvironment objectForKey:@"CONTENT_TYPE"] isEqualToString:@"multipart/form-data"]) {
+      } else if ([contentType isEqualToString:@"multipart/form-data"]) {
         @throw @"CGINotImplementedException";
       }
-      
     }
     
     //printf("%@\n", requestParameters);
@@ -195,6 +195,7 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
     // Parameter parsing done
     
     CGIRequest *request = [CGIRequest requestWithPath:path parameters:requestParameters environment:requestEnvironment];
+    [request setMessageBody:dataString withType:contentType];
     
     FCGX_FPrintF(req.out,
       "Content-type: application/xml; charset=UTF-8\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n%s",
