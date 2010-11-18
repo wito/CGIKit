@@ -2,6 +2,7 @@
 /* Copyright 2010 His Exalted Highness the Lord-Emperor Wito (Williham Totland) */
 
 #import "CGIKit/CGIRequest.h"
+#import "CGIKit/CGIString.h"
 
 @implementation CGIRequest
 
@@ -13,6 +14,14 @@
   retval->environment = [env retain];
   
   return [retval autorelease];
+}
+
+- (void)setMessageBody:(CGIString *)body withType:(CGIString *)type {
+  [contentType release];
+  [messageBody release];
+
+  contentType = [type copy];
+  messageBody = [body copy];
 }
 
 - (CGIString *)path {
@@ -27,12 +36,22 @@
   return environment;
 }
 
+- (CGIString *)messageBody {
+  return messageBody;
+}
+
+- (CGIString *)contentType {
+  return contentType;
+}
+
 - (void)dealloc {
   [path release];
 
   [parameters release];
   [environment release];
   
+  [self setMessageBody:nil withType:nil];
+
   [super dealloc];
 }
 

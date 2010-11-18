@@ -4,12 +4,16 @@
 #import "CGIObject.h"
 
 @class CGIDictionary;
+@class CGIString;
 
 @interface CGIRequest : CGIObject {
   CGIString *path;
 
   CGIDictionary *parameters;
   CGIDictionary *environment;
+
+  CGIString *contentType;
+  CGIString *messageBody;
 }
 
 + (id)requestWithPath:(CGIString *)pa parameters:(CGIDictionary *)p environment:(CGIDictionary *)env;
@@ -18,5 +22,10 @@
 
 - (CGIDictionary *)parameters;
 - (CGIDictionary *)environment;
+
+- (void)setMessageBody:(CGIString *)body withType:(CGIString *)type;
+
+- (CGIString *)messageBody;
+- (CGIString *)contentType;
 
 @end
