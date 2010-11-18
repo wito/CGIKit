@@ -184,7 +184,7 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
             }
           }
         }
-      } else {
+      } else if ([[requestEnvironment objectForKey:@"CONTENT_TYPE"] isEqualToString:@"multipart/form-data"]) {
         @throw @"CGINotImplementedException";
       }
       
@@ -203,7 +203,7 @@ int CGIApplicationMain (int argc, const char **argv, const char **envp, CGIStrin
     
     }
     @catch (CGIString *e) {
-      printf("%@\n", e);
+      CGILog(@"%@", e);
     }
     
     FCGX_Finish_r(&req);
